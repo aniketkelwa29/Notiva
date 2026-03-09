@@ -1,0 +1,22 @@
+package com.net.Notiva.entity;
+
+import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import com.net.Notiva.entity.Roles;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Data
+@Document(collection = "users")
+public class User {
+    @Id
+    String id;
+    String userName;
+    String email;
+    String password;
+    private Roles role;
+    private List<Note> Notes  = new ArrayList<>();
+}
