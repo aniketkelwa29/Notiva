@@ -1,4 +1,5 @@
 package com.net.Notiva.services;
+
 import com.net.Notiva.entity.Note;
 import com.net.Notiva.entity.User;
 import com.net.Notiva.repository.NoteRepository;
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
@@ -16,34 +18,34 @@ public class NoteService {
     @Autowired
     private UserRepository userRepository;
 
-    public List<Note> getUserNotes() {
+    private User getAuthenticatedUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String userName = auth.getName();
-        User user = userRepository.findByUserName(userName);
+
+        return userRepository.findByUserName(userName);
+    }
+
+    public List<Note> getUserNotes() {
+        User user = getAuthenticatedUser();
 
         return noteRepository.findByUserId(user.getId());
     }
 
     public Note addNote(Note note) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String userName = auth.getName();
-        User user = userRepository.findByUserName(userName);
+        User user = getAuthenticatedUser();
+
         note.setUserId(user.getId());
-        Note savedNote = noteRepository.save(note);
-        return savedNote;
+        return noteRepository.save(note);
     }
 
     public Note updateNote(String noteId, Note updatedNote) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String userName = auth.getName();
-        User user = userRepository.findByUserName(userName);
-
+        User user = getAuthenticatedUser();
 
         Note existingNote = noteRepository.findById(noteId)
                 .orElseThrow(() -> new RuntimeException("Note not Found"));
 
-        if(!existingNote.getUserId().equals(user.getId())){
-            throw new RuntimeException("unauthorized");
+        if (!existingNote.getUserId().equals(user.getId())) {
+            throw new IllegalStateException("unauthorized access");
         }
         existingNote.setTitle(updatedNote.getTitle());
         existingNote.setContent(updatedNote.getContent());
@@ -52,10 +54,7 @@ public class NoteService {
     }
 
     public Note deleteNote(String noteId) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String userName = auth.getName();
-        User user = userRepository.findByUserName(userName);
-
+        User user = getAuthenticatedUser();
         Note existingNote = noteRepository.findById(noteId)
                 .orElseThrow(() -> new RuntimeException("Note not found"));
 

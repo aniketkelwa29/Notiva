@@ -3,8 +3,9 @@ package com.net.Notiva.services;
 import com.net.Notiva.entity.User;
 import com.net.Notiva.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,8 +17,17 @@ public class UserService {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
+    private User getAuthenticatedUser(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String userName = auth.getName();
+
+        return userRepository.findByUserName(userName);
+    }
     public User getUser(String userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+
+        User user  = getAuthenticatedUser();
+
+        return userRepository.findById(user.getId()).orElseThrow(() -> new RuntimeException("User not found"));
     }
 
     public User addUser(User userDetails) {
