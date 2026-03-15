@@ -32,26 +32,26 @@ public class NoteController {
     // CREATE note
     @PostMapping("/createNote")
     public ResponseEntity<Note> addNotes(@RequestBody Note note) {
-
         Note savedNotes = noteService.addNote(note);
+
         return new ResponseEntity<>(savedNotes, HttpStatus.CREATED);
     }
 
     // UPDATE note
-    @PutMapping("/{noteId}")
+    @PutMapping
     public ResponseEntity<Note> updateNotes(
-            @PathVariable String noteId,
             @RequestBody Note updatedNotes) {
 
-        Note updatedNote = noteService.updateNote(noteId, updatedNotes);
+        Note updatedNote = noteService.updateNote( updatedNotes);
         return new ResponseEntity<>(updatedNote, HttpStatus.OK);
     }
 
     // DELETE note
     @DeleteMapping("/{noteId}")
-    public ResponseEntity<?> deleteNotes(@PathVariable String noteId){
+    public ResponseEntity<Note> deleteNotes(@PathVariable String noteId){
         System.out.println("delete called");
         noteService.deleteNote(noteId);
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

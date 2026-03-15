@@ -38,10 +38,10 @@ public class NoteService {
         return noteRepository.save(note);
     }
 
-    public Note updateNote(String noteId, Note updatedNote) {
+    public Note updateNote( Note updatedNote) {
         User user = getAuthenticatedUser();
 
-        Note existingNote = noteRepository.findById(noteId)
+        Note existingNote = noteRepository.findById(user.getId())
                 .orElseThrow(() -> new RuntimeException("Note not Found"));
 
         if (!existingNote.getUserId().equals(user.getId())) {
@@ -55,13 +55,16 @@ public class NoteService {
 
     public Note deleteNote(String noteId) {
         User user = getAuthenticatedUser();
+        System.out.println("delete Call for the user : "+user.getUserName());
+        System.out.println("note id recieved is  : "+noteId);
+
         Note existingNote = noteRepository.findById(noteId)
                 .orElseThrow(() -> new RuntimeException("Note not found"));
 
         if (!existingNote.getUserId().equals(user.getId())) {
             throw new RuntimeException("Unauthorized");
         }
-        noteRepository.delete(existingNote);
+        noteRepository.deleteById(noteId);
         return existingNote;
     }
 }

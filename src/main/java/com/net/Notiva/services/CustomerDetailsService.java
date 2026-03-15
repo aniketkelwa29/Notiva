@@ -22,10 +22,8 @@ public class CustomerDetailsService implements org.springframework.security.core
             UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
                     .username(user.getUserName()).
                     password(user.getPassword())
-                    .roles(user.getRole().toString()).
+                    .roles(user.getRole().name()).
                     build();
-
-
             return userDetails;
         }
         throw new UsernameNotFoundException("userName not found " + username);
