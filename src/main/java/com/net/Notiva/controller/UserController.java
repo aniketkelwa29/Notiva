@@ -14,10 +14,10 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<User> getUser(@PathVariable String userId) {
+    @GetMapping
+    public ResponseEntity<User> getUser() {
         System.out.println("call from get ");
-        return new ResponseEntity<>(userService.getUser(userId), HttpStatus.OK);
+        return new ResponseEntity<>(userService.getUser(), HttpStatus.OK);
     }
 
     @PostMapping("/register")
@@ -25,9 +25,9 @@ public class UserController {
         return new ResponseEntity<>(userService.addUser(userDetails), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{userId}")
-    public ResponseEntity<User> updateUser(@PathVariable String userId, @RequestBody User updatedDetails) {
-        userService.updateUser(userId, updatedDetails);
+    @PutMapping()
+    public ResponseEntity<User> updateUser( @RequestBody User updatedDetails) {
+        userService.updateUser(updatedDetails);
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @DeleteMapping("/{userId}")

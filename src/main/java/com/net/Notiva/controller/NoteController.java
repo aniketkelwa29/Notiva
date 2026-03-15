@@ -30,7 +30,7 @@ public class NoteController {
     }
 
     // CREATE note
-    @PostMapping
+    @PostMapping("/createNote")
     public ResponseEntity<Note> addNotes(@RequestBody Note note) {
 
         Note savedNotes = noteService.addNote(note);

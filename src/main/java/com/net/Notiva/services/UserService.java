@@ -17,20 +17,22 @@ public class UserService {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
-    private User getAuthenticatedUser(){
+    private User getAuthenticatedUser() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String userName = auth.getName();
 
         return userRepository.findByUserName(userName);
     }
-    public User getUser(String userId) {
 
-        User user  = getAuthenticatedUser();
+    public User getUser() {
+
+        User user = getAuthenticatedUser();
 
         return userRepository.findById(user.getId()).orElseThrow(() -> new RuntimeException("User not found"));
     }
 
     public User addUser(User userDetails) {
+
         String encodedPassword = passwordEncoder.encode(userDetails.getPassword());
         userDetails.setPassword(encodedPassword);
 
@@ -38,22 +40,22 @@ public class UserService {
 
     }
 
-    public User updateUser(String userId, User updatedDetails) {
-        User existingUser = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+    public User updateUser( User updatedDetails) {
+        User user = getAuthenticatedUser();
+        User existingUser = userRepository.findById(user.getId()).orElseThrow(() -> new RuntimeException("User not found"));
         existingUser.setUserName(updatedDetails.getUserName());
-        if(updatedDetails.getPassword()!=null){
-        existingUser.setPassword(passwordEncoder.encode(updatedDetails.getPassword()));}
-        existingUser.setEmail(updatedDetails.getEmail());
+        if (updatedDetails.getPassword() != null) {
+            existingUser.setPassword(passwordEncoder.encode(updatedDetails.getPassword()));
+        }
         existingUser.setRole(updatedDetails.getRole());
 
         return userRepository.save(existingUser);
     }
 
     public User deleteUser(String userId) {
-
+        User user = getAuthenticatedUser();
         User existingUser = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-//        userRepository.delete(existingUser);
-        userRepository.deleteById(userId);
+        userRepository.deleteById(user.getId());
 
         return existingUser;
     }

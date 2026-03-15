@@ -17,6 +17,5 @@ public class User {
     String userName;
     String email;
     String password;
-    private Roles role;
-    private List<Note> Notes  = new ArrayList<>();
+    private Roles role = Roles.USER;
 }
