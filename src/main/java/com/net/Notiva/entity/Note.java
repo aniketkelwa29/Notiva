@@ -21,5 +21,4 @@ public class Note {
 
     private LocalDateTime currenttime =LocalDateTime.now();
 
-
 }

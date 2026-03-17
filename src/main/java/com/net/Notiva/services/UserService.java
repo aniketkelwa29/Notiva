@@ -1,6 +1,7 @@
 package com.net.Notiva.services;
 
 import com.net.Notiva.entity.User;
+import com.net.Notiva.exception.ResourceNotFoundException;
 import com.net.Notiva.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -28,7 +29,9 @@ public class UserService {
 
         User user = getAuthenticatedUser();
 
-        return userRepository.findById(user.getId()).orElseThrow(() -> new RuntimeException("User not found"));
+        return userRepository.findById(user.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not Found"+user.getId()));
+
     }
 
     public User addUser(User userDetails) {
@@ -42,7 +45,9 @@ public class UserService {
 
     public User updateUser( User updatedDetails) {
         User user = getAuthenticatedUser();
-        User existingUser = userRepository.findById(user.getId()).orElseThrow(() -> new RuntimeException("User not found"));
+        User existingUser = userRepository.findById(user.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not Found"+user.getId()));
+
         existingUser.setUserName(updatedDetails.getUserName());
         if (updatedDetails.getPassword() != null) {
             existingUser.setPassword(passwordEncoder.encode(updatedDetails.getPassword()));
@@ -54,7 +59,9 @@ public class UserService {
 
     public User deleteUser(String userId) {
         User user = getAuthenticatedUser();
-        User existingUser = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        User existingUser = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not Found"+user.getId()));
+
         userRepository.deleteById(user.getId());
 
         return existingUser;

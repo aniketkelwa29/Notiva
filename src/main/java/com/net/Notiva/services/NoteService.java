@@ -1,7 +1,9 @@
 package com.net.Notiva.services;
 
+import com.fasterxml.jackson.annotation.JacksonInject;
 import com.net.Notiva.entity.Note;
 import com.net.Notiva.entity.User;
+import com.net.Notiva.exception.ResourceNotFoundException;
 import com.net.Notiva.repository.NoteRepository;
 import com.net.Notiva.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,27 +44,23 @@ public class NoteService {
         User user = getAuthenticatedUser();
 
         Note existingNote = noteRepository.findById(user.getId())
-                .orElseThrow(() -> new RuntimeException("Note not Found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Note not Found"+user.getId()));
 
         if (!existingNote.getUserId().equals(user.getId())) {
             throw new IllegalStateException("unauthorized access");
         }
         existingNote.setTitle(updatedNote.getTitle());
         existingNote.setContent(updatedNote.getContent());
-
         return noteRepository.save(existingNote);
     }
 
     public Note deleteNote(String noteId) {
         User user = getAuthenticatedUser();
-        System.out.println("delete Call for the user : "+user.getUserName());
-        System.out.println("note id recieved is  : "+noteId);
-
         Note existingNote = noteRepository.findById(noteId)
-                .orElseThrow(() -> new RuntimeException("Note not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Note not Found"+user.getId()));
 
         if (!existingNote.getUserId().equals(user.getId())) {
-            throw new RuntimeException("Unauthorized");
+            throw new IllegalStateException("Unauthorized");
         }
         noteRepository.deleteById(noteId);
         return existingNote;
