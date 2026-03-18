@@ -1,6 +1,7 @@
 package com.net.Notiva.services;
 
 import com.net.Notiva.dto.LoginRequest;
+import com.net.Notiva.jwtSecurity.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,12 +14,17 @@ public class  AuthService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
     public String login(LoginRequest request){
       Authentication authentication =
               authenticationManager.authenticate(
                       new UsernamePasswordAuthenticationToken(
                               request.getUsername()
                               ,request.getPassword()));
-          return "Login Successful";
+      String jwtToken = jwtUtil.generrateToken(request.getUsername());
+
+          return jwtToken;
     }
 }

@@ -34,6 +34,13 @@ public class UserService {
 
     }
 
+    public User getByUserName(String userName) {
+
+        return userRepository.findById(userName)
+                .orElseThrow(() -> new ResourceNotFoundException("User not Found"+userName));
+
+    }
+
     public User addUser(User userDetails) {
 
         String encodedPassword = passwordEncoder.encode(userDetails.getPassword());

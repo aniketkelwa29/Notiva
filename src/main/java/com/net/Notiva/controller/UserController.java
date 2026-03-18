@@ -1,6 +1,7 @@
 package com.net.Notiva.controller;
 
 import com.net.Notiva.entity.User;
+import com.net.Notiva.jwtSecurity.JwtUtil;
 import com.net.Notiva.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/user")
 public class UserController {
 
+    @Autowired
+    private JwtUtil jwtUtil;
     @Autowired
     private UserService userService;
 

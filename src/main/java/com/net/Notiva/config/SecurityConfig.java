@@ -1,6 +1,7 @@
 package com.net.Notiva.config;
 
 import com.net.Notiva.exception.ResourceNotFoundException;
+import com.net.Notiva.jwtSecurity.JwtFilter;
 import com.net.Notiva.services.CustomerDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -12,6 +13,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class SecurityConfig {
@@ -20,6 +22,9 @@ public class SecurityConfig {
 
     @Autowired
     private CustomerDetailsService customerDetailsService;
+
+    @Autowired
+    private JwtFilter jwtFilter;
 
 
     @Bean
@@ -33,6 +38,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/admin").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .httpBasic(Customizer.withDefaults())
                 .userDetailsService(customerDetailsService);  // this one is the new method for the configure global
 
@@ -44,6 +50,8 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
+
+
     // iss method se hum, jo username password db me h unse check kr rhe h postman k user or pass ko
     // we call userdetails service and pass the data of user and instance of password encoder
 
