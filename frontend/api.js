@@ -1,6 +1,8 @@
 // api.js - Backend Connection Service for Notiva App
 
-const API_BASE_URL = 'http://localhost:8080'; // Updated to 8080 for backend
+// const API_BASE_URL = 'http://localhost:8080'; // Updated to 8080 for backend
+const API_BASE_URL = 'https://notiva-trsd.onrender.com'; // Updated to 8080 for backend
+
 
 const api = {
   getToken: () => localStorage.getItem('notiva_auth_token'),
@@ -9,7 +11,7 @@ const api = {
 
   async request(endpoint, options = {}) {
     const url = `${API_BASE_URL}${endpoint}`;
-    
+
     const headers = {
       'Content-Type': 'application/json',
       ...options.headers
@@ -24,7 +26,7 @@ const api = {
 
     try {
       const response = await fetch(url, config);
-      
+
       let data;
       // Many 204/NO_CONTENT or pure OK responses don't have json
       const text = await response.text();
@@ -36,8 +38,8 @@ const api = {
 
       if (!response.ok) {
         if (response.status === 401 || response.status === 403) {
-           // Invalid token
-           if (typeof handleLogout === 'function') handleLogout();
+          // Invalid token
+          if (typeof handleLogout === 'function') handleLogout();
         }
         throw new Error(data?.message || data || `HTTP error! status: ${response.status}`);
       }
