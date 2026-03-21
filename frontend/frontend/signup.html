@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notiva | Signup</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL,GRAD,opsz@300,0,0,24" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: { bgDark: '#0F172A', cardDark: '#1E293B', primary: '#6366F1', primaryHover: '#4F46E5', textMain: '#E2E8F0', textMuted: '#94A3B8' },
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #0F172A; color: #E2E8F0; margin: 0; overflow-x: hidden; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24; }
+    
+    /* Background Animation */
+    .bg-animation { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; background: #0F172A; overflow: hidden; }
+    .orb { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.5; animation: float 15s infinite ease-in-out alternate; }
+    .orb-1 { width: 40vw; height: 40vw; background: #6366F1; top: -10vw; left: -10vw; }
+    .orb-2 { width: 50vw; height: 50vw; background: #818CF8; bottom: -10vw; right: -10vw; animation-delay: -5s; opacity: 0.3; }
+    .orb-3 { width: 30vw; height: 30vw; background: #4F46E5; top: 40%; left: 50%; transform: translate(-50%, -50%); animation-delay: -10s; opacity: 0.2; }
+    
+    @keyframes float {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(-30px, -50px) scale(1.1); }
+    }
+    
+    /* Glassmorphism */
+    .glass-card {
+      background: rgba(30, 41, 59, 0.65);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+    
+    .glass-input {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+    }
+    .glass-input:focus {
+      background: rgba(15, 23, 42, 0.8);
+      border-color: #6366F1;
+      box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+    }
+  </style>
+  <script src="api.js"></script>
+  <script src="app.js"></script>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 relative pt-12 pb-12">
+
+  <!-- Animated Background -->
+  <div class="bg-animation">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <div class="w-full max-w-[480px] relative z-10">
+    <div class="text-center mb-8 transform transition-all duration-700 hover:scale-105">
+      <h1 class="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">Create an Account</h1>
+      <p class="text-textMuted mt-2 text-sm tracking-wide">Start writing your secure notes today.</p>
+    </div>
+
+    <div class="glass-card rounded-[20px] p-8 transition-transform duration-500 hover:shadow-primary/10">
+      <form id="signup-form" class="space-y-5">
+        
+        <div class="space-y-1.5">
+          <label class="block text-[11px] font-bold uppercase tracking-[0.15em] text-textMuted ml-1">Full Name</label>
+          <div class="relative group">
+            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary/70 text-[20px] group-focus-within:text-primary transition-colors">person</span>
+            <input type="text" id="name" required class="glass-input w-full rounded-xl py-3.5 pl-12 pr-4 text-white placeholder-gray-500 outline-none transition-all duration-300" placeholder="John Doe" />
+          </div>
+        </div>
+
+        <div class="space-y-1.5">
+          <label class="block text-[11px] font-bold uppercase tracking-[0.15em] text-textMuted ml-1">Email Address</label>
+          <div class="relative group">
+            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary/70 text-[20px] group-focus-within:text-primary transition-colors">mail</span>
+            <input type="email" id="email" required class="glass-input w-full rounded-xl py-3.5 pl-12 pr-4 text-white placeholder-gray-500 outline-none transition-all duration-300" placeholder="john@email.com" />
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div class="space-y-1.5">
+            <label class="block text-[11px] font-bold uppercase tracking-[0.15em] text-textMuted ml-1">Password</label>
+            <div class="relative group">
+              <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary/70 text-[20px] group-focus-within:text-primary transition-colors">lock</span>
+              <input type="password" id="password" required class="glass-input w-full rounded-xl py-3.5 pl-12 pr-4 text-white placeholder-gray-500 outline-none transition-all duration-300" placeholder="••••••••" />
+            </div>
+          </div>
+
+          <div class="space-y-1.5">
+            <label class="block text-[11px] font-bold uppercase tracking-[0.15em] text-textMuted ml-1">Confirm Password</label>
+            <div class="relative group">
+              <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary/70 text-[20px] group-focus-within:text-primary transition-colors">lock</span>
+              <input type="password" id="confirm" required class="glass-input w-full rounded-xl py-3.5 pl-12 pr-4 text-white placeholder-gray-500 outline-none transition-all duration-300" placeholder="••••••••" />
+            </div>
+          </div>
+        </div>
+        
+        <button type="submit" class="w-full bg-gradient-to-r from-primary to-primaryHover hover:from-primaryHover hover:to-indigo-500 text-white font-bold py-4 rounded-xl shadow-[0_0_20px_rgba(99,102,241,0.3)] hover:shadow-[0_0_25px_rgba(99,102,241,0.5)] transition-all duration-300 active:scale-[0.98] mt-8 flex items-center justify-center group overflow-hidden relative">
+          <span class="absolute w-0 h-0 transition-all duration-500 ease-out bg-white rounded-full group-hover:w-64 group-hover:h-64 opacity-10"></span>
+          <span class="relative flex items-center gap-2">Sign Up <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span></span>
+        </button>
+      </form>
+      
+      <div class="mt-8 pt-6 border-t border-white/5 text-center">
+        <p class="text-sm text-textMuted">
+          Already have an account? <a href="index.html" class="text-primary hover:text-white transition-colors font-bold tracking-wide">Log In</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    if(api.getToken()) { window.location.href = 'dashboard.html'; }
+
+    document.getElementById('signup-form').onsubmit = async (e) => {
+      e.preventDefault();
+      const n = document.getElementById('name').value;
+      const em = document.getElementById('email').value;
+      const pw = document.getElementById('password').value;
+      const cnf = document.getElementById('confirm').value;
+      
+      if(pw !== cnf) {
+        showToast('Passwords do not match.', 'error');
+        return;
+      }
+
+      const btn = e.target.querySelector('button[type="submit"]');
+      const originalHtml = btn.innerHTML;
+      btn.innerHTML = '<span class="relative flex items-center gap-2">Creating...</span>';
+
+      try {
+        const newUser = await api.register(n, em, pw);
+        showToast('Account created successfully! Please login.', 'success');
+        
+        // Auto-login attempt
+        try {
+          const res = await api.login(n, pw); // Username is passed as userName logic via backend
+          if (res && res.token) {
+            api.setToken(res.token);
+            NotivaState.user = { id: newUser.id || newUser.userName, name: newUser.userName, email: newUser.email };
+            window.location.href = 'dashboard.html';
+            return;
+          }
+        } catch(loginErr) { 
+          // ignore auto-login errors and just redirect to index
+        }
+        
+        setTimeout(() => window.location.href = 'index.html', 1500);
+      } catch (error) {
+        showToast(error.message || 'Failed to create account.', 'error');
+        btn.innerHTML = originalHtml;
+      }
+    };
+  </script>
+</body>
+</html>

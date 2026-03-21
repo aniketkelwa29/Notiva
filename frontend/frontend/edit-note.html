@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notiva | Edit Note</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL,GRAD,opsz@300,0,0,24" rel="stylesheet" />
+  <script>
+    tailwind.config={darkMode:'class',theme:{extend:{colors:{bgDark:'#0F172A',cardDark:'#1E293B',primary:'#6366F1',primaryHover:'#4F46E5',textMain:'#E2E8F0',textMuted:'#94A3B8'},fontFamily:{sans:['Inter','sans-serif']}}}}
+  </script>
+  <style> 
+    body { font-family: 'Inter', sans-serif; background-color: #0F172A; color: #E2E8F0; margin: 0; overflow-x: hidden; } 
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24; }
+    
+    .bg-animation { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; background: #0F172A; overflow: hidden; }
+    .orb { position: absolute; border-radius: 50%; filter: blur(140px); opacity: 0.15; animation: float 20s infinite ease-in-out alternate; pointer-events: none;}
+    .orb-1 { width: 50vw; height: 50vw; background: #22C55E; top: 10vh; right: -10vw; }
+    @keyframes float { 0% { transform: translateY(0) scale(1); } 100% { transform: translateY(30px) scale(1.1); } }
+    
+    .editor-toolbar button {
+      padding: 8px; border-radius: 8px; transition: all 0.2s;
+      color: #94A3B8; background: transparent; display: flex; align-items: center; justify-content: center;
+    }
+    .editor-toolbar button:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
+    .editor-content:empty:before { content: attr(placeholder); color: #475569; pointer-events: none; display: block; }
+    .editor-content { outline: none; min-height: 400px; padding: 20px 0; font-weight: 300; line-height: 1.8; }
+    
+    .glass-panel { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(24px); border: 1px solid rgba(34,197,94,0.2); border-radius: 9999px; padding: 6px 16px; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5); }
+    .glass-panel-green { background: rgba(20, 40, 30, 0.7); border-color: rgba(34, 197, 94, 0.4); }
+
+    .editor-content h2 { font-size: 1.875rem; font-weight: 800; margin-top: 1.5em; margin-bottom: 0.5em; color: #fff; letter-spacing: -0.025em; }
+    .editor-content h3 { font-size: 1.5rem; font-weight: 700; margin-top: 1.25em; margin-bottom: 0.5em; color: #fff; letter-spacing: -0.025em; }
+    .editor-content p { margin-bottom: 1em; }
+    .editor-content ul { list-style-type: none; padding-left: 1.5em; margin-bottom: 1em; color: #E2E8F0; }
+    .editor-content ul li::before { content: "•"; color: #22C55E; font-weight: bold; display: inline-block; width: 1em; margin-left: -1em; }
+    .editor-content ol { list-style-type: decimal; padding-left: 1.5em; margin-bottom: 1em; color: #E2E8F0; }
+    .editor-content ol li::marker { color: #22C55E; font-weight: 700; }
+    .editor-content b, .editor-content strong { font-weight: 800; color: #fff; }
+    .editor-content i, .editor-content em { font-style: italic; }
+    .editor-content u { text-decoration: underline; text-underline-offset: 4px; text-decoration-color: #22C55E; text-decoration-thickness: 2px; }
+  </style>
+  <script src="api.js"></script>
+  <script src="app.js"></script>
+</head>
+<body class="min-h-screen flex text-white relative">
+  <div class="bg-animation"><div class="orb orb-1"></div></div>
+
+  <div class="flex-1 flex flex-col min-w-0 h-screen overflow-hidden relative z-10">
+    <main class="flex-1 overflow-y-auto px-4 md:px-8 py-8 w-full scroll-smooth">
+      <div class="max-w-4xl mx-auto w-full space-y-6 h-full flex flex-col pb-32 lg:pb-12">
+        
+        <div class="flex items-center justify-between mb-2">
+          <button onclick="window.history.back()" class="text-textMuted hover:text-white transition-colors flex items-center text-[11px] font-bold uppercase tracking-[0.2em] bg-white/5 px-4 py-2.5 rounded-lg border border-white/5 hover:border-white/20"><span class="material-symbols-outlined mr-2 text-[16px]">arrow_back</span>Back</button>
+          <div class="flex items-center gap-2">
+            <span class="text-[10px] text-green-400 uppercase tracking-[0.25em] font-black bg-green-500/10 px-4 py-2 rounded border border-green-500/20 drop-shadow-sm flex items-center"><span class="material-symbols-outlined text-[14px] mr-1">edit_square</span>Editing Note</span>
+          </div>
+        </div>
+
+        <form id="edit-form" class="flex flex-col flex-1 h-full min-h-[60vh] animate-[slideIn_0.5s_ease-out]">
+          <div class="mb-6 relative group">
+            <div class="absolute -left-6 top-1/2 -translate-y-1/2 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 hidden md:block text-green-400"><span class="material-symbols-outlined">draw</span></div>
+            <input id="note-title" type="text" placeholder="Note Title" class="w-full bg-transparent border-none p-0 text-5xl lg:text-7xl font-black text-white focus:ring-0 outline-none placeholder-gray-800 tracking-tighter transition-all" required />
+          </div>
+          
+          <!-- Rich Text Toolbar -->
+          <div class="glass-panel glass-panel-green flex items-center flex-wrap gap-1 sticky top-4 z-40 editor-toolbar self-center mb-8">
+            <button type="button" onmousedown="event.preventDefault();" onclick="format('bold')" title="Bold"><span class="material-symbols-outlined text-[20px]">format_bold</span></button>
+            <button type="button" onmousedown="event.preventDefault();" onclick="format('italic')" title="Italic"><span class="material-symbols-outlined text-[20px]">format_italic</span></button>
+            <button type="button" onmousedown="event.preventDefault();" onclick="format('underline')" title="Underline"><span class="material-symbols-outlined text-[20px]">format_underlined</span></button>
+            <div class="w-px h-5 bg-white/10 mx-1"></div>
+            <button type="button" onmousedown="event.preventDefault();" onclick="format('justifyLeft')" title="Align Left"><span class="material-symbols-outlined text-[20px]">format_align_left</span></button>
+            <button type="button" onmousedown="event.preventDefault();" onclick="format('justifyCenter')" title="Align Center"><span class="material-symbols-outlined text-[20px]">format_align_center</span></button>
+            <button type="button" onmousedown="event.preventDefault();" onclick="format('justifyRight')" title="Align Right"><span class="material-symbols-outlined text-[20px]">format_align_right</span></button>
+            <div class="w-px h-5 bg-white/10 mx-1"></div>
+            <button type="button" onmousedown="event.preventDefault();" onclick="format('insertUnorderedList')" title="Bullet List"><span class="material-symbols-outlined text-[20px]">format_list_bulleted</span></button>
+            <button type="button" onmousedown="event.preventDefault();" onclick="format('insertOrderedList')" title="Numbered List"><span class="material-symbols-outlined text-[20px]">format_list_numbered</span></button>
+            <div class="w-px h-5 bg-white/10 mx-1"></div>
+            
+            <div class="relative flex items-center gap-1.5 px-2 bg-green-500/10 rounded-full hover:bg-green-500/20 transition-colors h-8 ml-1 group border border-green-500/20">
+              <span class="material-symbols-outlined text-[16px] text-green-400 group-hover:scale-110 transition-transform pointer-events-none">palette</span>
+              <input type="color" id="colorPicker" title="Text Color" oninput="format('foreColor', this.value)" class="w-5 h-5 p-0 border-0 rounded-full cursor-pointer bg-transparent" value="#22C55E">
+            </div>
+
+            <div class="w-px h-5 bg-white/10 mx-1.5 ml-3"></div>
+            <button type="button" onmousedown="event.preventDefault();" onclick="format('formatBlock', 'H2')" title="Large Heading" class="px-2 !rounded-full text-[11px] font-black uppercase tracking-wider bg-green-500/20 text-green-400 hover:bg-green-500/30 hover:text-white border border-green-500/30 transition-all">H2</button>
+            <button type="button" onmousedown="event.preventDefault();" onclick="format('formatBlock', 'H3')" title="Medium Heading" class="px-2 !rounded-full text-[11px] font-black uppercase tracking-wider bg-white/5 text-textMuted hover:bg-white/10 hover:text-white border border-white/5 transition-all">H3</button>
+          </div>
+
+          <div class="flex-1 relative min-h-[400px] mb-8">
+            <div class="absolute inset-0 pointer-events-none opacity-5" style="background-image: repeating-linear-gradient(0deg, transparent, transparent 40px, #ffffff 40px, #ffffff 41px);"></div>
+            <div id="note-content" contenteditable="true" placeholder="Start typing your note here..." class="editor-content w-full h-full min-h-[400px] bg-transparent border-none p-0 text-xl md:text-2xl text-textMain focus:ring-0 outline-none relative z-10 font-light"></div>
+          </div>
+
+          <div class="fixed bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-[#0F172A] via-[#0F172A]/90 to-transparent z-50 flex justify-center backdrop-blur-sm">
+            <div class="w-full max-w-xl">
+              <button type="button" id="submit-btn" class="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-emerald-600 text-white shadow-[0_0_30px_rgba(34,197,94,0.3)] hover:shadow-[0_0_40px_rgba(34,197,94,0.5)] flex items-center justify-center font-bold py-5 rounded-[20px] transition-transform hover:-translate-y-1 tracking-wider uppercase text-sm border border-white/10 group"><span class="material-symbols-outlined mr-3 text-[22px] group-hover:scale-110 transition-transform">cloud_sync</span>Save Updates</button>
+            </div>
+          </div>
+        </form>
+
+      </div>
+    </main>
+  </div>
+
+  <script>
+    requireAuth();
+
+    function format(command, value = null) {
+      document.execCommand(command, false, value);
+      document.getElementById('note-content').focus();
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const noteId = params.get('id');
+
+    async function loadNote() {
+      try {
+        const notesResponse = await api.getNotes() || [];
+        const notes = Array.isArray(notesResponse) ? notesResponse : [];
+        const note = notes.find(n => n.id == noteId);
+        
+        if (!note) {
+          showToast("Note not found or you don't have access.", "error");
+          setTimeout(() => window.location.href = 'notes.html', 1500);
+          return;
+        }
+
+        window.currentNote = note;
+        document.getElementById('note-title').value = note.title;
+        document.getElementById('note-content').innerHTML = note.content || '';
+      } catch (err) {
+        showToast("Error loading note.", "error");
+        console.error(err);
+      }
+    }
+
+    loadNote();
+
+    document.getElementById('submit-btn').onclick = async (e) => {
+      e.preventDefault();
+      
+      const title = document.getElementById('note-title').value;
+      const content = document.getElementById('note-content').innerHTML;
+
+      if (!title.trim() || !document.getElementById('note-content').textContent.trim()) {
+        showToast('Both Title and Content are required.', 'error');
+        return;
+      }
+
+      if(!window.currentNote) return;
+      const updatedNote = { ...window.currentNote, title, content };
+
+      const btn = document.getElementById('submit-btn');
+      const originalHtml = btn.innerHTML;
+      btn.innerHTML = '<span class="material-symbols-outlined mr-3 text-[22px]">sync</span>Saving Updates...';
+
+      try {
+        await api.updateNote(updatedNote);
+        showToast('Note updated successfully.', 'success');
+        setTimeout(() => window.location.href = 'notes.html', 1000);
+      } catch (err) {
+        showToast('Failed to update note.', 'error');
+        btn.innerHTML = originalHtml;
+        console.error(err);
+      }
+    };
+  </script>
+</body>
+</html>
