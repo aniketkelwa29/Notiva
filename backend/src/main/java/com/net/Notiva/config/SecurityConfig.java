@@ -56,7 +56,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(List.of("http://localhost:3000","http://127.0.0.1:5500"));
+        configuration.setAllowedOrigins(List.of("http://localhost:3000","http://127.0.0.1:5500","https://notivax.netlify.app"));
         // 👆 change this to your frontend URL
 
         configuration.setAllowedMethods(List.of(
