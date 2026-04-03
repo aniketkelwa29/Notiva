@@ -2,7 +2,7 @@ FROM eclipse-temurin:21-jre
 
 WORKDIR /app
 
-COPY *.jar app.jar
+COPY Notiva.jar app.jar
 
 EXPOSE 8080
 
