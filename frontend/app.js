@@ -1,16 +1,15 @@
 // app.js - Vanilla JS Logic for Notiva App
 
-
 // State Management
 const NotivaState = {
   get user() { return JSON.parse(localStorage.getItem('notiva_auth_user')) || { name: 'User', email: 'user@notiva.io' }; },
-  set user(v) { 
-    if(v) localStorage.setItem('notiva_auth_user', JSON.stringify(v)); 
+  set user(v) {
+    if (v) localStorage.setItem('notiva_auth_user', JSON.stringify(v));
     else localStorage.removeItem('notiva_auth_user');
   }
 };
 
-// Simple Router / Guard
+// Auth Guard — used by dashboard/notes/edit/add pages
 function requireAuth() {
   if (typeof api !== 'undefined' && !api.getToken()) {
     window.location.href = 'index.html';
@@ -23,57 +22,36 @@ function handleLogout() {
   window.location.href = 'index.html';
 }
 
-// Toast System
+// Fallback toast (notiva-bg.js overrides this with the nicer version when loaded)
 function showToast(message, type = 'success') {
-  const container = document.getElementById('toast-container') || (function() {
-    const div = document.createElement('div');
-    div.id = 'toast-container';
-    div.className = 'fixed bottom-4 right-4 z-50 flex flex-col gap-2';
-    document.body.appendChild(div);
-    return div;
-  })();
-
-  const toast = document.createElement('div');
-  const bg = type === 'success' ? 'bg-[#1E293B] border-l-4 border-[#6366F1]' : 'bg-[#1E293B] border-l-4 border-red-500';
-  toast.className = `toast-enter ${bg} text-[#E2E8F0] shadow-lg rounded p-4 flex items-center min-w-[250px]`;
-  toast.innerHTML = `<span class="material-symbols-outlined mr-2">${type === 'success' ? 'check_circle' : 'error'}</span> ${message}`;
-
-  container.appendChild(toast);
-  setTimeout(() => {
-    toast.style.opacity = '0';
-    toast.style.transform = 'translateX(100%)';
-    toast.style.transition = 'all 0.3s ease';
-    setTimeout(() => toast.remove(), 300);
-  }, 3000);
+  // If notiva-bg.js is loaded, its showToast will be used instead (defined after this file).
+  // This is a minimal fallback.
+  let tc = document.getElementById('toast-container');
+  if (!tc) { tc = document.createElement('div'); tc.id = 'toast-container'; document.body.appendChild(tc); }
+  const t = document.createElement('div');
+  t.style.cssText = 'display:flex;align-items:center;gap:8px;padding:12px 18px;border-radius:12px;font-size:13.5px;font-weight:500;backdrop-filter:blur(20px);box-shadow:0 10px 32px rgba(0,0,0,.45);margin-bottom:8px;max-width:340px;animation:toastSlide .35s ease both;font-family:Inter,sans-serif;';
+  t.style.background = type === 'success' ? 'rgba(16,185,129,.14)' : 'rgba(239,68,68,.14)';
+  t.style.border = type === 'success' ? '1px solid rgba(16,185,129,.28)' : '1px solid rgba(239,68,68,.28)';
+  t.style.color = type === 'success' ? '#6EE7B7' : '#FCA5A5';
+  t.innerHTML = message;
+  tc.appendChild(t);
+  setTimeout(() => { t.style.opacity='0'; t.style.transform='translateX(30px)'; t.style.transition='.3s ease'; setTimeout(()=>t.remove(),300); }, 3200);
 }
 
-// Sidebar Toggle Logic
+// Legacy sidebar support (older pages used initSidebarNavigation)
 function toggleSidebar() {
   const sidebar = document.getElementById('sidebar');
   const overlay = document.getElementById('mobile-overlay');
-  if (sidebar && overlay) {
-    sidebar.classList.toggle('-translate-x-full');
-    overlay.classList.toggle('hidden');
-  }
+  if (sidebar) sidebar.classList.toggle('open');
+  if (overlay) overlay.classList.toggle('open');
 }
 
-// Global Inject Sidebar
 function initSidebarNavigation() {
   const overlay = document.getElementById('mobile-overlay');
-  if (overlay) overlay.onclick = toggleSidebar;
-
-  const toggleBtn = document.getElementById('menu-btn');
-  if (toggleBtn) toggleBtn.onclick = toggleSidebar;
-
-  const logoutBtns = document.querySelectorAll('.btn-logout');
-  logoutBtns.forEach(b => b.onclick = handleLogout);
-
-  // Mark active link
-  const path = window.location.pathname.split('/').pop();
-  document.querySelectorAll('#sidebar nav a').forEach(link => {
-    if (path && link.getAttribute('href').includes(path)) {
-      link.classList.add('bg-[#6366F1]', 'bg-opacity-10', 'text-[#6366F1]');
-      link.classList.remove('text-[#94A3B8]');
-    }
-  });
+  if (overlay) overlay.addEventListener('click', toggleSidebar);
+  const btn = document.getElementById('menu-btn');
+  if (btn) btn.addEventListener('click', toggleSidebar);
+  const closeBtn = document.getElementById('sidebar-close');
+  if (closeBtn) closeBtn.addEventListener('click', toggleSidebar);
+  document.querySelectorAll('.btn-logout').forEach(b => b.addEventListener('click', handleLogout));
 }

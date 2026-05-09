@@ -1,165 +1,224 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Notiva | My Notes</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL,GRAD,opsz@300,0,0,24" rel="stylesheet" />
-  <script>
-    tailwind.config={darkMode:'class',theme:{extend:{colors:{bgDark:'#0F172A',cardDark:'#1E293B',primary:'#6366F1',primaryHover:'#4F46E5',textMain:'#E2E8F0',textMuted:'#94A3B8'},fontFamily:{sans:['Inter','sans-serif']}}}}
-  </script>
-  <style>
-    body { font-family: 'Inter', sans-serif; background-color: #0F172A; color: #E2E8F0; margin: 0; overflow-x: hidden; }
-    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24; }
-    
-    /* Background Animation */
-    .bg-animation { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; background: #0F172A; overflow: hidden; }
-    .orb { position: absolute; border-radius: 50%; filter: blur(140px); opacity: 0.3; animation: float 20s infinite ease-in-out alternate; }
-    .orb-1 { width: 50vw; height: 50vw; background: #6366F1; top: 20vh; left: -10vw; opacity: 0.2; }
-    .orb-2 { width: 40vw; height: 40vw; background: #4F46E5; bottom: -10vh; right: 20vw; animation-delay: -7s; opacity: 0.25; }
-    
-    @keyframes float {
-      0% { transform: translate(0, 0) scale(1); }
-      100% { transform: translate(40px, -20px) scale(1.1); }
-    }
-    
-    .glass-sidebar { background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-right: 1px solid rgba(255, 255, 255, 0.05); }
-    .glass-header { background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
-    .glass-card { background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5); }
-  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL,GRAD,opsz@300,0,0,24" rel="stylesheet">
+  <link rel="stylesheet" href="notiva.css">
   <script src="api.js"></script>
   <script src="app.js"></script>
+  <script src="notiva-bg.js"></script>
+  <style>
+    .notes-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:18px; }
+    @media(max-width:480px) { .notes-grid { grid-template-columns:1fr; } }
+    .search-bar { display:flex; align-items:center; gap:10px; padding:12px 16px; border-radius:14px; background:rgba(8,12,24,.5); border:1px solid rgba(99,102,241,.18); transition:all .25s; }
+    .search-bar:focus-within { border-color:var(--primary); box-shadow:0 0 0 3px rgba(99,102,241,.12); }
+    .search-bar input { background:transparent; border:none; outline:none; color:var(--text); font-family:inherit; font-size:14px; flex:1; }
+    .search-bar input::placeholder { color:var(--dim); }
+    @media(max-width:1023px) { .mobile-logo { display:block!important; } }
+    @media(min-width:1024px) { .lg-hidden { display:none!important; } }
+    @media(min-width:768px) { #nav-user-block { display:flex!important; } }
+  </style>
 </head>
-<body class="min-h-screen flex text-white overflow-hidden relative">
-  <div class="bg-animation"><div class="orb orb-1"></div><div class="orb orb-2"></div></div>
-  <div id="mobile-overlay" class="fixed inset-0 bg-black/70 z-40 hidden lg:hidden backdrop-blur-md transition-opacity"></div>
-  
-  <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 w-64 glass-sidebar z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 flex flex-col">
-    <div class="h-20 flex items-center px-6 border-b border-white/5 shrink-0"><div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primaryHover flex items-center justify-center shadow-lg shadow-primary/20 mr-3"><span class="material-symbols-outlined text-white text-[20px]">enhanced_encryption</span></div><h1 class="text-2xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">Notiva</h1><button class="ml-auto lg:hidden text-textMuted hover:text-white transition-colors" onclick="toggleSidebar()"><span class="material-symbols-outlined text-xl">close</span></button></div>
-    <nav class="flex-1 px-4 py-8 space-y-2 overflow-y-auto">
-      <p class="px-2 text-[10px] font-bold text-textMuted uppercase tracking-widest mb-4">Menu</p>
-      <a href="dashboard.html" class="flex items-center px-4 py-3.5 rounded-xl transition-all duration-300 font-medium text-textMuted hover:bg-white/5 hover:text-white"><span class="material-symbols-outlined mr-3 text-[20px]">dashboard</span> Dashboard</a>
-      <a href="notes.html" class="flex items-center px-4 py-3.5 rounded-xl transition-all duration-300 font-medium bg-primary/10 text-primary border border-primary/20 shadow-[0_0_15px_rgba(99,102,241,0.1)]"><span class="material-symbols-outlined mr-3 text-[20px]">folder</span> My Notes</a>
-      <a href="add-note.html" class="flex items-center px-4 py-3.5 rounded-xl transition-all duration-300 font-medium text-textMuted hover:bg-white/5 hover:text-white"><span class="material-symbols-outlined mr-3 text-[20px]">add_box</span> Add Note</a>
-      <p class="px-2 text-[10px] font-bold text-textMuted uppercase tracking-widest mb-4 mt-8 block">Preferences</p>
-      <a href="settings.html" class="flex items-center px-4 py-3.5 rounded-xl transition-all duration-300 font-medium text-textMuted hover:bg-white/5 hover:text-white"><span class="material-symbols-outlined mr-3 text-[20px]">manage_accounts</span> Settings</a>
-    </nav>
-    <div class="p-4 border-t border-white/5"><button class="btn-logout flex w-full items-center px-4 py-3.5 rounded-xl text-textMuted hover:bg-red-500/10 hover:text-red-400 transition-colors font-medium hover:border-red-500/20 border border-transparent"><span class="material-symbols-outlined mr-3 text-[20px]">logout</span> Log Out</button></div>
-  </aside>
+<body>
+  <div class="n-bg">
+    <div class="n-bg-grid"></div>
+    <div class="n-orb n-orb-1" style="opacity:.35;"></div>
+    <div class="n-orb n-orb-2" style="opacity:.25;animation-delay:-7s;"></div>
+    <canvas id="n-canvas"></canvas>
+  </div>
 
-  <div class="flex-1 flex flex-col min-w-0 h-screen relative z-10 overflow-hidden">
-    <header class="h-20 shrink-0 flex items-center justify-between px-6 glass-header z-30 sticky top-0"><button id="menu-btn" class="lg:hidden text-textMuted hover:text-white transition-colors"><span class="material-symbols-outlined">menu</span></button><div class="ml-auto gap-4 flex items-center"><div class="text-right hidden md:block"><p id="nav-user-name" class="text-sm font-extrabold tracking-wide">User</p><p id="nav-user-email" class="text-[11px] text-primary tracking-widest uppercase">user@notiva.io</p></div><div class="h-11 w-11 rounded-full bg-gradient-to-tr from-cardDark to-gray-800 flex items-center justify-center border border-white/10 shadow-lg cursor-pointer hover:border-primary/50 transition-colors"><span id="nav-user-initial" class="text-white font-black text-lg">U</span></div></div></header>
+  <div id="toast-container"></div>
+  <div id="mobile-overlay"></div>
 
-    <main class="flex-1 overflow-y-auto px-4 md:px-8 py-10 w-full scroll-smooth">
-      <div class="max-w-7xl mx-auto w-full space-y-12">
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-white/10">
-          <div class="animate-[slideIn_0.5s_ease-out]">
-            <p class="text-primary text-[10px] font-black uppercase tracking-[0.25em] mb-1">Your Entries</p>
-            <h1 class="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400 tracking-tight">My Notes</h1>
-            <p class="text-textMuted mt-3 text-lg font-light">View and manage all your notes in one place.</p>
-          </div>
-          <button onclick="window.location.href='add-note.html'" class="bg-gradient-to-r from-primary to-primaryHover hover:from-primaryHover hover:to-indigo-500 text-white font-bold py-3.5 px-6 rounded-xl shadow-[0_0_20px_rgba(99,102,241,0.2)] hover:shadow-[0_0_30px_rgba(99,102,241,0.4)] flex items-center transition-all duration-300 active:scale-[0.98]"><span class="material-symbols-outlined mr-2">add</span> Create Note</button>
+  <div class="app-layout" style="position:relative;z-index:1;">
+    <!-- Sidebar (same pattern) -->
+    <aside id="sidebar">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">
+          <span class="material-symbols-outlined" style="color:#fff;font-size:20px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">auto_awesome</span>
         </div>
-        <div id="notes-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-12"></div>
+        <span class="sidebar-logo-name">Notiva</span>
+        <button id="sidebar-close" style="margin-left:auto;background:none;border:none;cursor:pointer;color:var(--muted);display:flex;align-items:center;" class="lg-hidden">
+          <span class="material-symbols-outlined">close</span>
+        </button>
       </div>
-    </main>
+      <nav class="sidebar-nav">
+        <p class="sidebar-section-label">Menu</p>
+        <a href="dashboard.html" class="sidebar-link"><span class="material-symbols-outlined" style="font-size:20px;">dashboard</span> Dashboard</a>
+        <a href="notes.html" class="sidebar-link active"><span class="material-symbols-outlined" style="font-size:20px;">folder</span> My Notes</a>
+        <a href="add-note.html" class="sidebar-link"><span class="material-symbols-outlined" style="font-size:20px;">add_box</span> Add Note</a>
+        <p class="sidebar-section-label">Preferences</p>
+        <a href="settings.html" class="sidebar-link"><span class="material-symbols-outlined" style="font-size:20px;">manage_accounts</span> Settings</a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="sidebar-user">
+          <div class="avatar" id="sidebar-avatar">U</div>
+          <div style="min-width:0;">
+            <p id="sidebar-user-name" style="font-size:14px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">User</p>
+            <p id="sidebar-user-email" style="font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></p>
+          </div>
+        </div>
+        <button class="btn-logout btn btn-danger" style="width:100%;border-radius:12px;padding:11px;font-size:13.5px;font-family:inherit;">
+          <span class="material-symbols-outlined" style="font-size:18px;">logout</span> Log Out
+        </button>
+      </div>
+    </aside>
+
+    <div class="app-main">
+      <header class="n-header">
+        <button id="menu-btn" style="background:none;border:none;cursor:pointer;color:var(--muted);display:flex;align-items:center;padding:8px;" class="lg-hidden">
+          <span class="material-symbols-outlined" style="font-size:24px;">menu</span>
+        </button>
+        <div style="font-size:22px;font-weight:900;letter-spacing:-.03em;background:linear-gradient(to right,#fff,#c7d2fe);-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:none;" class="mobile-logo">Notiva</div>
+        <div style="margin-left:auto;display:flex;align-items:center;gap:14px;">
+          <div style="text-align:right;display:none;align-items:center;gap:14px;" id="nav-user-block">
+            <div>
+              <p id="nav-name" style="font-size:14px;font-weight:700;color:#fff;text-align:right;">User</p>
+              <p id="nav-email" style="font-size:11px;color:var(--primary);letter-spacing:.08em;text-transform:uppercase;text-align:right;"></p>
+            </div>
+          </div>
+          <div class="avatar" id="nav-initial" style="cursor:pointer;" onclick="window.location.href='settings.html'">U</div>
+        </div>
+      </header>
+
+      <main class="app-scroll" style="padding:28px 24px 60px;">
+        <div style="max-width:1100px;margin:0 auto;">
+
+          <!-- Header row -->
+          <div class="anim-in" style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:28px;">
+            <div>
+              <p style="font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--primary);margin-bottom:8px;">Your Entries</p>
+              <h1 style="font-size:clamp(26px,4vw,40px);font-weight:900;letter-spacing:-.04em;background:linear-gradient(to right,#fff 60%,#94a3b8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.1;">My Notes</h1>
+              <p style="color:var(--muted);margin-top:8px;font-size:15px;font-weight:300;">View and manage all your notes in one place.</p>
+            </div>
+            <button onclick="window.location.href='add-note.html'" class="btn btn-primary" style="padding:13px 22px;border-radius:13px;font-size:14px;white-space:nowrap;">
+              <span class="material-symbols-outlined" style="font-size:18px;">add</span> Create Note
+            </button>
+          </div>
+
+          <!-- Search & Filter -->
+          <div class="anim-in anim-in-d1" style="display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap;">
+            <div class="search-bar" style="flex:1;min-width:200px;">
+              <span class="material-symbols-outlined" style="color:var(--dim);font-size:20px;">search</span>
+              <input type="text" id="search-input" placeholder="Search notes…">
+            </div>
+            <button id="sort-btn" style="display:flex;align-items:center;gap:6px;padding:12px 16px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--muted);cursor:pointer;font-size:13px;font-weight:600;font-family:inherit;transition:all .2s;white-space:nowrap;" onmouseover="this.style.borderColor='rgba(99,102,241,.3)'" onmouseout="this.style.borderColor='var(--border)'">
+              <span class="material-symbols-outlined" style="font-size:18px;">sort</span> Newest
+            </button>
+          </div>
+
+          <!-- Grid -->
+          <div id="notes-grid" class="notes-grid anim-in anim-in-d2"></div>
+        </div>
+      </main>
+    </div>
   </div>
 
   <!-- Delete Modal -->
-  <div id="delete-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
-    <div class="absolute inset-0 bg-black/60 backdrop-blur-xl" onclick="closeModal()"></div>
-    <div class="glass-card w-full max-w-sm rounded-[24px] shadow-2xl z-10 p-1 relative overflow-hidden">
-      <div class="absolute inset-0 bg-gradient-to-br from-red-500/10 to-transparent pointer-events-none"></div>
-      <div class="bg-cardDark/90 rounded-[20px] p-8 relative z-10 border border-white/5">
-        <div class="w-16 h-16 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-500 mx-auto w-full mb-6 relative">
-          <span class="material-symbols-outlined text-3xl">delete_forever</span>
-        </div>
-        <h3 class="text-2xl font-black text-white text-center mb-2 tracking-tight">Delete Note?</h3>
-        <p class="text-textMuted text-center font-light mb-8 text-sm leading-relaxed">This note will be permanently removed. This action cannot be undone.</p>
-        <div class="flex flex-col gap-3">
-          <button id="confirm-delete-btn" class="w-full py-3.5 bg-red-500 hover:bg-red-600 shadow-[0_0_20px_rgba(239,68,68,0.3)] text-white font-bold rounded-xl transition-all tracking-wide text-sm">Delete Note</button>
-          <button onclick="closeModal()" class="w-full py-3.5 bg-transparent border border-white/10 rounded-xl hover:bg-white/5 text-textMuted hover:text-white font-bold transition-all tracking-wide text-sm">Cancel</button>
-        </div>
+  <div id="del-modal" style="display:none;" class="n-modal-bg">
+    <div class="n-modal glass" style="border-radius:22px;padding:36px 28px;text-align:center;">
+      <div style="width:60px;height:60px;border-radius:50%;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.28);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;box-shadow:0 0 28px rgba(239,68,68,.12);">
+        <span class="material-symbols-outlined" style="color:#FCA5A5;font-size:28px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">delete_forever</span>
+      </div>
+      <h3 style="font-size:20px;font-weight:800;color:#fff;margin-bottom:10px;">Delete Note?</h3>
+      <p style="color:var(--muted);font-size:14px;line-height:1.6;margin-bottom:24px;">This note will be permanently removed and cannot be recovered.</p>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <button id="confirm-del" class="btn btn-danger" style="width:100%;padding:13px;border-radius:12px;font-size:14px;font-family:inherit;background:rgba(239,68,68,.85);color:#fff;border:none;">Delete Note</button>
+        <button onclick="closeModal()" class="btn btn-ghost" style="width:100%;padding:13px;border-radius:12px;font-size:14px;font-family:inherit;">Cancel</button>
       </div>
     </div>
   </div>
 
   <script>
     requireAuth();
-    initSidebarNavigation();
+    initParticles('n-canvas');
+    initSidebar();
+    fillNavUser();
 
-    const user = NotivaState.user;
-    document.getElementById('nav-user-name').innerText = user.name || user.userName || 'User';
-    document.getElementById('nav-user-email').innerText = user.email || '';
-    document.getElementById('nav-user-initial').innerText = (user.name || user.userName || 'U').charAt(0).toUpperCase();
-
+    let allNotes = [];
     let noteToDelete = null;
-    const modal = document.getElementById('delete-modal');
 
-    async function renderNotes() {
-      try {
-        const notesResponse = await api.getNotes() || [];
-        const userNotes = Array.isArray(notesResponse) ? notesResponse : [];
-        const container = document.getElementById('notes-grid');
-        
-        if (userNotes.length === 0) {
-          container.innerHTML = `
-            <div class="col-span-full border border-dashed border-white/10 rounded-[32px] p-20 text-center text-textMuted flex flex-col items-center justify-center bg-white/5 backdrop-blur-sm mt-12">
-              <div class="w-24 h-24 rounded-full bg-white/5 flex items-center justify-center mb-8 border border-white/10 shadow-[0_0_50px_rgba(255,255,255,0.05)]">
-                <span class="material-symbols-outlined text-gray-500 text-[48px]">folder_open</span>
-              </div>
-              <p class="text-3xl font-black text-white mb-3 tracking-tighter">No Notes Created</p>
-              <p class="text-base mb-10 mt-2 max-w-md font-light text-gray-400">You don't have any notes saved yet.</p>
-              <button onclick="window.location.href='add-note.html'" class="bg-gradient-to-r from-primary to-primaryHover hover:from-primaryHover hover:to-indigo-500 text-white font-bold py-4 px-10 rounded-xl shadow-[0_0_20px_rgba(99,102,241,0.2)] transition-all tracking-wide">Create First Note</button>
-            </div>
-          `;
-          return;
-        }
+    function closeModal() { document.getElementById('del-modal').style.display='none'; noteToDelete=null; }
+    document.getElementById('del-modal').addEventListener('click', e => { if(e.target===document.getElementById('del-modal')) closeModal(); });
 
-        const sorted = userNotes.sort((a,b) => new Date(b.currenttime || b.createdAt) - new Date(a.currenttime || a.createdAt));
-
-        container.innerHTML = sorted.map(note => `
-          <div onclick="window.location.href='edit-note.html?id=${note.id}'" class="glass-card rounded-[20px] p-6 flex flex-col h-[280px] cursor-pointer group hover:border-primary/40 hover:-translate-y-1.5 transition-all duration-300 relative overflow-hidden">
-            <div class="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            <div class="relative z-10 flex justify-between items-start mb-6">
-              <span class="text-[9px] uppercase tracking-[0.25em] font-black text-primary bg-primary/10 px-3 py-1.5 rounded border border-primary/20">Saved Entry</span>
-              <span class="text-[10px] text-textMuted font-bold tracking-widest uppercase flex items-center drop-shadow-sm bg-[#0F172A]/70 px-2 py-1 rounded"><span class="material-symbols-outlined text-[14px] mr-1.5 text-primary/80">radio_button_checked</span>${new Date(note.currenttime || note.createdAt).toLocaleDateString()}</span>
-            </div>
-            <h3 class="text-2xl font-black text-white mb-3 group-hover:text-primary transition-colors line-clamp-2 tracking-tight leading-snug relative z-10 drop-shadow-sm">${note.title}</h3>
-            <p class="text-textMuted text-[13px] leading-relaxed line-clamp-4 flex-1 font-light relative z-10">${(note.content || '').replace(/<[^>]*>?/gm, '')}</p>
-            <div class="relative z-10 flex justify-end gap-2 mt-4 pt-4 border-t border-white/5 opacity-80 group-hover:opacity-100 transition-opacity">
-              <button onclick="event.stopPropagation(); window.location.href='edit-note.html?id=${note.id}'" class="p-2.5 text-textMuted hover:text-white rounded-lg hover:bg-white/10 transition-colors border border-transparent hover:border-white/10"><span class="material-symbols-outlined text-[20px]">edit_note</span></button>
-              <button onclick="event.stopPropagation(); triggerDelete('${note.id}')" class="p-2.5 text-textMuted hover:text-red-400 rounded-lg hover:bg-red-500/10 transition-colors border border-transparent hover:border-red-500/20"><span class="material-symbols-outlined text-[20px]">delete_sweep</span></button>
-            </div>
-          </div>
-        `).join('');
-      } catch (err) {
-        showToast('Failed to load notes.', 'error');
-        console.error(err);
-      }
-    }
-
-    window.triggerDelete = (id) => { noteToDelete = id; modal.classList.remove('hidden'); };
-    window.closeModal = () => { noteToDelete = null; modal.classList.add('hidden'); };
-    document.getElementById('confirm-delete-btn').onclick = async () => {
-      if(!noteToDelete) return;
-      const btn = document.getElementById('confirm-delete-btn');
-      btn.innerText = 'Deleting...';
-      try {
-        await api.deleteNote(noteToDelete);
-        closeModal();
-        showToast('Note deleted successfully.', 'success');
-        renderNotes();
-      } catch(err) {
-        showToast('Failed to delete note.', 'error');
-      } finally {
-        btn.innerText = 'Delete Note';
-      }
+    window.triggerDelete = (id, ev) => {
+      ev && ev.stopPropagation();
+      noteToDelete = id;
+      document.getElementById('del-modal').style.display='flex';
     };
 
-    renderNotes();
+    document.getElementById('confirm-del').addEventListener('click', async () => {
+      if (!noteToDelete) return;
+      const btn = document.getElementById('confirm-del');
+      btn.textContent = 'Deleting…'; btn.disabled = true;
+      try {
+        await api.deleteNote(noteToDelete);
+        closeModal(); showToast('Note deleted.','success'); renderGrid(allNotes.filter(n=>n.id!==noteToDelete));
+        allNotes = allNotes.filter(n=>n.id!==noteToDelete);
+      } catch(_) { showToast('Failed to delete note.','error'); }
+      btn.textContent='Delete Note'; btn.disabled=false;
+    });
+
+    // Search
+    document.getElementById('search-input').addEventListener('input', e => {
+      const q = e.target.value.toLowerCase();
+      renderGrid(allNotes.filter(n => (n.title||'').toLowerCase().includes(q) || (n.content||'').toLowerCase().includes(q)));
+    });
+
+    // Sort
+    let sortAsc = false;
+    document.getElementById('sort-btn').addEventListener('click', function() {
+      sortAsc = !sortAsc;
+      this.innerHTML = `<span class="material-symbols-outlined" style="font-size:18px;">sort</span> ${sortAsc?'Oldest':'Newest'}`;
+      renderGrid([...allNotes].sort((a,b)=> sortAsc ? new Date(a.currenttime||a.createdAt)-new Date(b.currenttime||b.createdAt) : new Date(b.currenttime||b.createdAt)-new Date(a.currenttime||a.createdAt)));
+    });
+
+    function renderGrid(notes) {
+      const grid = document.getElementById('notes-grid');
+      if (notes.length === 0) {
+        grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:80px 20px;color:var(--muted);">
+          <span class="material-symbols-outlined" style="font-size:52px;display:block;margin-bottom:14px;opacity:.35">folder_open</span>
+          <p style="font-size:20px;font-weight:800;color:#fff;margin-bottom:8px;">No Notes Found</p>
+          <p style="font-size:14px;margin-bottom:24px;">You don't have any notes yet. Start writing!</p>
+          <button onclick="window.location.href='add-note.html'" class="btn btn-primary" style="padding:13px 28px;border-radius:12px;font-size:14px;">Create Note</button>
+        </div>`;
+        return;
+      }
+      grid.innerHTML = notes.map(n => {
+        const date = new Date(n.currenttime||n.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+        const preview = (n.content||'').replace(/<[^>]*>/g,'').substring(0,100);
+        return `
+        <div class="n-card note-card" style="padding:22px;border-radius:18px;" onclick="window.location.href='edit-note.html?id=${n.id}'">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+            <span style="font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--primary);background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);padding:4px 10px;border-radius:6px;">Note</span>
+            <span style="font-size:11px;color:var(--dim);font-weight:600;">${date}</span>
+          </div>
+          <h3 style="font-size:17px;font-weight:800;color:#fff;margin-bottom:8px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${n.title}</h3>
+          <p style="font-size:13px;color:var(--muted);line-height:1.65;flex:1;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;font-weight:300;">${preview}</p>
+          <div style="display:flex;justify-content:flex-end;gap:6px;margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.05);">
+            <button onclick="event.stopPropagation();window.location.href='edit-note.html?id=${n.id}'" style="padding:8px;border-radius:9px;background:transparent;border:none;color:var(--muted);cursor:pointer;transition:all .2s;display:flex;" onmouseover="this.style.background='rgba(255,255,255,.08)';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='var(--muted)'">
+              <span class="material-symbols-outlined" style="font-size:19px;">edit_note</span>
+            </button>
+            <button onclick="triggerDelete('${n.id}',event)" style="padding:8px;border-radius:9px;background:transparent;border:none;color:var(--muted);cursor:pointer;transition:all .2s;display:flex;" onmouseover="this.style.background='rgba(239,68,68,.1)';this.style.color='#FCA5A5'" onmouseout="this.style.background='transparent';this.style.color='var(--muted)'">
+              <span class="material-symbols-outlined" style="font-size:19px;">delete_sweep</span>
+            </button>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    async function loadNotes() {
+      try {
+        const res = await api.getNotes() || [];
+        allNotes = Array.isArray(res) ? res.sort((a,b)=>new Date(b.currenttime||b.createdAt)-new Date(a.currenttime||a.createdAt)) : [];
+        renderGrid(allNotes);
+      } catch(_) { showToast('Failed to load notes.','error'); }
+    }
+    loadNotes();
   </script>
 </body>
 </html>

@@ -1,169 +1,223 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Notiva | Signup</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL,GRAD,opsz@300,0,0,24" rel="stylesheet" />
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: { bgDark: '#0F172A', cardDark: '#1E293B', primary: '#6366F1', primaryHover: '#4F46E5', textMain: '#E2E8F0', textMuted: '#94A3B8' },
-          fontFamily: { sans: ['Inter', 'sans-serif'] },
-        }
-      }
-    }
-  </script>
-  <style>
-    body { font-family: 'Inter', sans-serif; background-color: #0F172A; color: #E2E8F0; margin: 0; overflow-x: hidden; }
-    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24; }
-    
-    /* Background Animation */
-    .bg-animation { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; background: #0F172A; overflow: hidden; }
-    .orb { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.5; animation: float 15s infinite ease-in-out alternate; }
-    .orb-1 { width: 40vw; height: 40vw; background: #6366F1; top: -10vw; left: -10vw; }
-    .orb-2 { width: 50vw; height: 50vw; background: #818CF8; bottom: -10vw; right: -10vw; animation-delay: -5s; opacity: 0.3; }
-    .orb-3 { width: 30vw; height: 30vw; background: #4F46E5; top: 40%; left: 50%; transform: translate(-50%, -50%); animation-delay: -10s; opacity: 0.2; }
-    
-    @keyframes float {
-      0% { transform: translate(0, 0) scale(1); }
-      100% { transform: translate(-30px, -50px) scale(1.1); }
-    }
-    
-    /* Glassmorphism */
-    .glass-card {
-      background: rgba(30, 41, 59, 0.65);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-    }
-    
-    .glass-input {
-      background: rgba(15, 23, 42, 0.6);
-      border: 1px solid rgba(99, 102, 241, 0.2);
-    }
-    .glass-input:focus {
-      background: rgba(15, 23, 42, 0.8);
-      border-color: #6366F1;
-      box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
-    }
-  </style>
+  <title>Notiva | Create Account</title>
+  <meta name="description" content="Sign up for Notiva — your intelligent, secure notes companion.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL,GRAD,opsz@300,0,0,24" rel="stylesheet">
+  <link rel="stylesheet" href="notiva.css">
   <script src="api.js"></script>
   <script src="app.js"></script>
+  <script src="notiva-bg.js"></script>
+  <style>
+    .auth-wrap { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px 16px; position:relative; z-index:1; }
+    .auth-card { width:100%; max-width:440px; }
+    .pw-eye { position:absolute; right:14px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:var(--dim); transition:color .2s; padding:0; display:flex; align-items:center; }
+    .pw-eye:hover { color:var(--primary); }
+    .field-ok { position:absolute; right:14px; top:50%; transform:translateY(-50%); opacity:0; transition:opacity .3s; pointer-events:none; }
+    .field-ok.show { opacity:1; }
+  </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4 relative pt-12 pb-12">
-
-  <!-- Animated Background -->
-  <div class="bg-animation">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
+<body>
+  <div class="n-bg">
+    <div class="n-bg-grid"></div>
+    <div class="n-orb n-orb-1" style="background:radial-gradient(circle,rgba(99,102,241,.5) 0%,transparent 70%);top:-15vw;right:-10vw;left:auto;bottom:auto;"></div>
+    <div class="n-orb n-orb-2" style="background:radial-gradient(circle,rgba(139,92,246,.35) 0%,transparent 70%);bottom:-12vw;left:-8vw;top:auto;right:auto;animation-delay:-7s;"></div>
+    <div class="n-orb n-orb-3"></div>
+    <div class="n-stars">
+      <div class="n-star" style="--t:10%;--l:20%;--d:7s;--dl:0s"></div>
+      <div class="n-star" style="--t:35%;--l:65%;--d:6s;--dl:2.5s"></div>
+      <div class="n-star" style="--t:65%;--l:10%;--d:8s;--dl:1s"></div>
+      <div class="n-star" style="--t:80%;--l:50%;--d:7.5s;--dl:4s"></div>
+      <div class="n-star" style="--t:20%;--l:80%;--d:9s;--dl:1.5s"></div>
+    </div>
+    <canvas id="n-canvas"></canvas>
   </div>
 
-  <div class="w-full max-w-[480px] relative z-10">
-    <div class="text-center mb-8 transform transition-all duration-700 hover:scale-105">
-      <h1 class="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">Create an Account</h1>
-      <p class="text-textMuted mt-2 text-sm tracking-wide">Start writing your secure notes today.</p>
-    </div>
+  <div id="toast-container"></div>
 
-    <div class="glass-card rounded-[20px] p-8 transition-transform duration-500 hover:shadow-primary/10">
-      <form id="signup-form" class="space-y-5">
-        
-        <div class="space-y-1.5">
-          <label class="block text-[11px] font-bold uppercase tracking-[0.15em] text-textMuted ml-1">Full Name</label>
-          <div class="relative group">
-            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary/70 text-[20px] group-focus-within:text-primary transition-colors">person</span>
-            <input type="text" id="name" required class="glass-input w-full rounded-xl py-3.5 pl-12 pr-4 text-white placeholder-gray-500 outline-none transition-all duration-300" placeholder="John Doe" />
-          </div>
-        </div>
+  <div class="auth-wrap">
+    <div class="auth-card anim-in">
 
-        <div class="space-y-1.5">
-          <label class="block text-[11px] font-bold uppercase tracking-[0.15em] text-textMuted ml-1">Email Address</label>
-          <div class="relative group">
-            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary/70 text-[20px] group-focus-within:text-primary transition-colors">mail</span>
-            <input type="email" id="email" required class="glass-input w-full rounded-xl py-3.5 pl-12 pr-4 text-white placeholder-gray-500 outline-none transition-all duration-300" placeholder="john@email.com" />
+      <!-- Brand -->
+      <div style="text-align:center;margin-bottom:28px;">
+        <a href="index.html" style="text-decoration:none;display:inline-block;">
+          <div style="width:58px;height:58px;border-radius:17px;background:linear-gradient(135deg,#818CF8,#6366F1,#4338CA);display:flex;align-items:center;justify-content:center;box-shadow:0 0 36px rgba(99,102,241,.4);border:1px solid rgba(255,255,255,.12);margin:0 auto 16px;">
+            <span class="material-symbols-outlined" style="font-size:26px;color:#fff;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">auto_awesome</span>
           </div>
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div class="space-y-1.5">
-            <label class="block text-[11px] font-bold uppercase tracking-[0.15em] text-textMuted ml-1">Password</label>
-            <div class="relative group">
-              <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary/70 text-[20px] group-focus-within:text-primary transition-colors">lock</span>
-              <input type="password" id="password" required class="glass-input w-full rounded-xl py-3.5 pl-12 pr-4 text-white placeholder-gray-500 outline-none transition-all duration-300" placeholder="••••••••" />
+        </a>
+        <span style="font-size:30px;font-weight:900;letter-spacing:-.04em;background:linear-gradient(to right,#fff,#c7d2fe);-webkit-background-clip:text;-webkit-text-fill-color:transparent;display:block;">Create Account</span>
+        <span style="font-size:13px;color:var(--muted);display:block;margin-top:6px;">Start writing your secure notes today.</span>
+      </div>
+
+      <!-- Card -->
+      <div class="glass" style="border-radius:22px;padding:32px 28px;">
+        <form id="signup-form" novalidate>
+
+          <!-- Username -->
+          <div style="margin-bottom:16px;">
+            <label class="n-label" for="name">Username</label>
+            <div style="position:relative;">
+              <span class="material-symbols-outlined" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:rgba(99,102,241,.55);font-size:20px;">person</span>
+              <input type="text" id="name" autocomplete="username" required
+                class="glass-input" placeholder="your_username"
+                style="width:100%;border-radius:13px;padding:13px 42px 13px 44px;font-size:14px;font-family:inherit;">
+              <span class="field-ok" id="name-ok">
+                <span class="material-symbols-outlined" style="font-size:19px;color:#10B981;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">check_circle</span>
+              </span>
             </div>
           </div>
 
-          <div class="space-y-1.5">
-            <label class="block text-[11px] font-bold uppercase tracking-[0.15em] text-textMuted ml-1">Confirm Password</label>
-            <div class="relative group">
-              <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary/70 text-[20px] group-focus-within:text-primary transition-colors">lock</span>
-              <input type="password" id="confirm" required class="glass-input w-full rounded-xl py-3.5 pl-12 pr-4 text-white placeholder-gray-500 outline-none transition-all duration-300" placeholder="••••••••" />
+          <!-- Email -->
+          <div style="margin-bottom:16px;">
+            <label class="n-label" for="email">Email Address</label>
+            <div style="position:relative;">
+              <span class="material-symbols-outlined" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:rgba(99,102,241,.55);font-size:20px;">mail</span>
+              <input type="email" id="email" autocomplete="email" required
+                class="glass-input" placeholder="you@example.com"
+                style="width:100%;border-radius:13px;padding:13px 42px 13px 44px;font-size:14px;font-family:inherit;">
+              <span class="field-ok" id="email-ok">
+                <span class="material-symbols-outlined" style="font-size:19px;color:#10B981;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">check_circle</span>
+              </span>
             </div>
           </div>
-        </div>
-        
-        <button type="submit" class="w-full bg-gradient-to-r from-primary to-primaryHover hover:from-primaryHover hover:to-indigo-500 text-white font-bold py-4 rounded-xl shadow-[0_0_20px_rgba(99,102,241,0.3)] hover:shadow-[0_0_25px_rgba(99,102,241,0.5)] transition-all duration-300 active:scale-[0.98] mt-8 flex items-center justify-center group overflow-hidden relative">
-          <span class="absolute w-0 h-0 transition-all duration-500 ease-out bg-white rounded-full group-hover:w-64 group-hover:h-64 opacity-10"></span>
-          <span class="relative flex items-center gap-2">Sign Up <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span></span>
-        </button>
-      </form>
-      
-      <div class="mt-8 pt-6 border-t border-white/5 text-center">
-        <p class="text-sm text-textMuted">
-          Already have an account? <a href="index.html" class="text-primary hover:text-white transition-colors font-bold tracking-wide">Log In</a>
+
+          <!-- Password -->
+          <div style="margin-bottom:16px;">
+            <label class="n-label" for="password">Password</label>
+            <div style="position:relative;">
+              <span class="material-symbols-outlined" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:rgba(99,102,241,.55);font-size:20px;">lock</span>
+              <input type="password" id="password" autocomplete="new-password" required
+                class="glass-input" placeholder="••••••••"
+                style="width:100%;border-radius:13px;padding:13px 46px 13px 44px;font-size:14px;font-family:inherit;">
+              <button type="button" class="pw-eye" id="pw-t1">
+                <span class="material-symbols-outlined" id="pw-e1" style="font-size:20px;">visibility</span>
+              </button>
+            </div>
+            <!-- Strength -->
+            <div class="strength-wrap">
+              <div class="strength-seg" id="s1"></div>
+              <div class="strength-seg" id="s2"></div>
+              <div class="strength-seg" id="s3"></div>
+              <div class="strength-seg" id="s4"></div>
+            </div>
+            <p id="strength-txt" style="font-size:10.5px;margin-top:4px;height:14px;"></p>
+          </div>
+
+          <!-- Confirm -->
+          <div style="margin-bottom:24px;">
+            <label class="n-label" for="confirm">Confirm Password</label>
+            <div style="position:relative;">
+              <span class="material-symbols-outlined" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:rgba(99,102,241,.55);font-size:20px;">lock_reset</span>
+              <input type="password" id="confirm" autocomplete="new-password" required
+                class="glass-input" placeholder="••••••••"
+                style="width:100%;border-radius:13px;padding:13px 46px 13px 44px;font-size:14px;font-family:inherit;">
+              <button type="button" class="pw-eye" id="pw-t2">
+                <span class="material-symbols-outlined" id="pw-e2" style="font-size:20px;">visibility</span>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" id="signup-btn" class="btn btn-primary" style="width:100%;padding:15px;border-radius:13px;font-size:15px;">
+            <span id="signup-inner" style="display:flex;align-items:center;gap:8px;">
+              Create Account <span class="material-symbols-outlined" style="font-size:18px;">arrow_forward</span>
+            </span>
+          </button>
+
+          <p style="font-size:11px;color:var(--dim);text-align:center;margin-top:14px;line-height:1.6;">
+            By signing up, you agree to our
+            <a href="#" style="color:var(--primary);text-decoration:none;">Terms</a> &amp;
+            <a href="#" style="color:var(--primary);text-decoration:none;">Privacy Policy</a>.
+          </p>
+        </form>
+
+        <div class="n-divider" style="margin:20px 0 16px;">or</div>
+        <p style="text-align:center;font-size:14px;color:var(--muted);">
+          Already have an account?
+          <a href="index.html" style="color:var(--primary);font-weight:700;text-decoration:none;margin-left:4px;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--primary)'">Log In</a>
         </p>
       </div>
+
+      <p style="text-align:center;font-size:11px;color:#374151;margin-top:20px;">© 2025 Notiva · All rights reserved</p>
     </div>
   </div>
 
   <script>
-    if(api.getToken()) { window.location.href = 'dashboard.html'; }
+    if (api.getToken()) window.location.href = 'dashboard.html';
+    initParticles('n-canvas');
 
-    document.getElementById('signup-form').onsubmit = async (e) => {
+    // PW toggles
+    function mkToggle(btnId, eyeId, inputId) {
+      document.getElementById(btnId).addEventListener('click', () => {
+        const i = document.getElementById(inputId), e = document.getElementById(eyeId);
+        i.type = i.type === 'password' ? 'text' : 'password';
+        e.textContent = i.type === 'password' ? 'visibility' : 'visibility_off';
+      });
+    }
+    mkToggle('pw-t1','pw-e1','password');
+    mkToggle('pw-t2','pw-e2','confirm');
+
+    // Strength
+    const segs = [document.getElementById('s1'),document.getElementById('s2'),document.getElementById('s3'),document.getElementById('s4')];
+    const stxt = document.getElementById('strength-txt');
+    const labels = ['','Weak','Fair','Good','Strong'];
+    const colors  = ['','s-weak','s-fair','s-good','s-strong'];
+    const tcolors = ['','#EF4444','#F59E0B','#10B981','#6366F1'];
+    function calcStrength(p) { let s=0; if(p.length>=8)s++; if(/[A-Z]/.test(p))s++; if(/[0-9]/.test(p))s++; if(/[^A-Za-z0-9]/.test(p))s++; return s; }
+    document.getElementById('password').addEventListener('input', e => {
+      const v=e.target.value, s=v?calcStrength(v):0;
+      segs.forEach((sg,i) => { sg.className='strength-seg'; if(i<s&&s>0) sg.classList.add(colors[s]); });
+      stxt.textContent = v?labels[s]:''; stxt.style.color = tcolors[s]||'';
+    });
+
+    // Field validation ticks
+    document.getElementById('name').addEventListener('blur', e => document.getElementById('name-ok').classList.toggle('show', e.target.value.trim().length>=2));
+    document.getElementById('email').addEventListener('blur', e => document.getElementById('email-ok').classList.toggle('show', /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.target.value)));
+
+    // Submit
+    document.getElementById('signup-form').addEventListener('submit', async e => {
       e.preventDefault();
-      const n = document.getElementById('name').value;
-      const em = document.getElementById('email').value;
-      const pw = document.getElementById('password').value;
-      const cnf = document.getElementById('confirm').value;
-      
-      if(pw !== cnf) {
-        showToast('Passwords do not match.', 'error');
-        return;
-      }
+      const n=document.getElementById('name').value.trim();
+      const em=document.getElementById('email').value.trim();
+      const pw=document.getElementById('password').value;
+      const cnf=document.getElementById('confirm').value;
 
-      const btn = e.target.querySelector('button[type="submit"]');
-      const originalHtml = btn.innerHTML;
-      btn.innerHTML = '<span class="relative flex items-center gap-2">Creating...</span>';
+      if(pw!==cnf){ showToast('Passwords do not match.','error'); return; }
+      if(pw.length<6){ showToast('Password must be at least 6 characters.','error'); return; }
+
+      const btn=document.getElementById('signup-btn');
+      const inner=document.getElementById('signup-inner');
+      btn.disabled=true;
+      inner.innerHTML='<span class="material-symbols-outlined" style="font-size:18px;animation:spin 1s linear infinite">progress_activity</span> Creating account…';
 
       try {
         const newUser = await api.register(n, em, pw);
-        showToast('Account created successfully! Please login.', 'success');
-        
-        // Auto-login attempt
+        showToast('Account created! Welcome to Notiva 🎉','success');
+        // Auto-login
         try {
-          const res = await api.login(n, pw); // Username is passed as userName logic via backend
-          if (res && res.token) {
+          const res = await api.login(n, pw);
+          if(res&&res.token){
             api.setToken(res.token);
-            NotivaState.user = { id: newUser.id || newUser.userName, name: newUser.userName, email: newUser.email };
-            window.location.href = 'dashboard.html';
+            NotivaState.user = { id: newUser.id||newUser.userName, name: newUser.userName, email: newUser.email };
+            setTimeout(()=>window.location.href='dashboard.html', 1200);
             return;
           }
-        } catch(loginErr) { 
-          // ignore auto-login errors and just redirect to index
-        }
-        
-        setTimeout(() => window.location.href = 'index.html', 1500);
-      } catch (error) {
-        showToast(error.message || 'Failed to create account.', 'error');
-        btn.innerHTML = originalHtml;
+        } catch(_){}
+        // Fallback: redirect to login with pre-filled hint
+        setTimeout(()=>window.location.href='index.html', 1800);
+      } catch(err) {
+        showToast(err.message||'Failed to create account. Please try again.','error');
+        btn.disabled=false;
+        inner.innerHTML='Create Account <span class="material-symbols-outlined" style="font-size:18px;">arrow_forward</span>';
       }
-    };
+    });
+
+    const s=document.createElement('style');
+    s.textContent='@keyframes spin{to{transform:rotate(360deg)}}';
+    document.head.appendChild(s);
   </script>
 </body>
 </html>

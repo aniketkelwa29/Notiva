@@ -1,221 +1,168 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
-
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Notiva | Login</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-    rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL,GRAD,opsz@300,0,0,24"
-    rel="stylesheet" />
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: { bgDark: '#0F172A', cardDark: '#1E293B', primary: '#6366F1', primaryHover: '#4F46E5', textMain: '#E2E8F0', textMuted: '#94A3B8' },
-          fontFamily: { sans: ['Inter', 'sans-serif'] },
-          animation: { 'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite' }
-        }
-      }
-    }
-  </script>
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: #0F172A;
-      color: #E2E8F0;
-      margin: 0;
-      overflow-x: hidden;
-    }
-
-    .material-symbols-outlined {
-      font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
-    }
-
-    /* Background Animation */
-    .bg-animation {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: -1;
-      background: #0F172A;
-      overflow: hidden;
-    }
-
-    .orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(100px);
-      opacity: 0.5;
-      animation: float 15s infinite ease-in-out alternate;
-    }
-
-    .orb-1 {
-      width: 50vw;
-      height: 50vw;
-      background: #6366F1;
-      top: -10vw;
-      left: -10vw;
-    }
-
-    .orb-2 {
-      width: 40vw;
-      height: 40vw;
-      background: #818CF8;
-      bottom: -10vw;
-      right: -10vw;
-      animation-delay: -5s;
-      opacity: 0.3;
-    }
-
-    .orb-3 {
-      width: 30vw;
-      height: 30vw;
-      background: #4F46E5;
-      top: 40%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      animation-delay: -10s;
-      opacity: 0.2;
-    }
-
-    @keyframes float {
-      0% {
-        transform: translate(0, 0) scale(1);
-      }
-
-      100% {
-        transform: translate(30px, 50px) scale(1.1);
-      }
-    }
-
-    /* Glassmorphism */
-    .glass-card {
-      background: rgba(30, 41, 59, 0.65);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-    }
-
-    .glass-input {
-      background: rgba(15, 23, 42, 0.6);
-      border: 1px solid rgba(99, 102, 241, 0.2);
-    }
-
-    .glass-input:focus {
-      background: rgba(15, 23, 42, 0.8);
-      border-color: #6366F1;
-      box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
-    }
-  </style>
+  <meta name="description" content="Log in to Notiva — your intelligent, secure notes companion.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL,GRAD,opsz@300,0,0,24" rel="stylesheet">
+  <link rel="stylesheet" href="notiva.css">
   <script src="api.js"></script>
   <script src="app.js"></script>
+  <script src="notiva-bg.js"></script>
+  <style>
+    .auth-wrap { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; position:relative; z-index:1; }
+    .auth-card  { width:100%; max-width:420px; }
+    .logo-ring  { width:68px; height:68px; border-radius:20px; background:linear-gradient(135deg,#818CF8,#6366F1,#4338CA); display:flex; align-items:center; justify-content:center; box-shadow:0 0 40px rgba(99,102,241,.45),0 0 80px rgba(99,102,241,.15); border:1px solid rgba(255,255,255,.12); position:relative; overflow:hidden; margin:0 auto 20px; }
+    .logo-ring::after { content:''; position:absolute; inset:0; background:rgba(255,255,255,.1); border-radius:inherit; animation:pulse 3s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{opacity:.1} 50%{opacity:.25} }
+    .brand-name { font-size:38px; font-weight:900; letter-spacing:-.04em; background:linear-gradient(to right,#fff,#c7d2fe); -webkit-background-clip:text; -webkit-text-fill-color:transparent; display:block; text-align:center; }
+    .brand-sub  { font-size:11px; font-weight:600; letter-spacing:.22em; text-transform:uppercase; color:#6366F1; opacity:.8; display:block; text-align:center; margin-top:6px; }
+    .pw-eye { position:absolute; right:14px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:var(--dim); transition:color .2s; padding:0; display:flex; align-items:center; }
+    .pw-eye:hover { color:var(--primary); }
+  </style>
 </head>
-
-<body class="min-h-screen flex items-center justify-center p-4 relative">
-
-  <!-- Animated Background -->
-  <div class="bg-animation">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
+<body>
+  <!-- Background -->
+  <div class="n-bg">
+    <div class="n-bg-grid"></div>
+    <div class="n-orb n-orb-1"></div>
+    <div class="n-orb n-orb-2"></div>
+    <div class="n-orb n-orb-3"></div>
+    <div class="n-stars">
+      <div class="n-star" style="--t:12%;--l:8%;--d:6s;--dl:0s"></div>
+      <div class="n-star" style="--t:38%;--l:28%;--d:8s;--dl:2s"></div>
+      <div class="n-star" style="--t:68%;--l:60%;--d:7s;--dl:4s"></div>
+      <div class="n-star" style="--t:22%;--l:72%;--d:9s;--dl:1s"></div>
+      <div class="n-star" style="--t:55%;--l:5%;--d:6.5s;--dl:3s"></div>
+    </div>
+    <canvas id="n-canvas"></canvas>
   </div>
 
-  <div class="w-full max-w-[420px] relative z-10">
-    <div class="text-center mb-10 transform transition-all duration-700 hover:scale-105">
-      <div
-        class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-primaryHover text-white mb-6 shadow-xl shadow-primary/30 border border-white/10 relative overflow-hidden">
-        <div class="absolute inset-0 bg-white/20 animate-pulse-slow"></div>
-        <span class="material-symbols-outlined text-3xl relative z-10">enhanced_encryption</span>
+  <div id="toast-container"></div>
+
+  <div class="auth-wrap">
+    <div class="auth-card anim-in">
+
+      <!-- Brand -->
+      <div style="text-align:center;margin-bottom:36px;">
+        <div class="logo-ring">
+          <span class="material-symbols-outlined" style="font-size:30px;color:#fff;position:relative;z-index:1;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24">auto_awesome</span>
+        </div>
+        <span class="brand-name">Notiva</span>
+        <span class="brand-sub">Your Intelligent Notes</span>
       </div>
-      <h1
-        class="text-4xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
-        Notiva</h1>
-      <p class="text-primary mt-2 font-medium tracking-wide uppercase text-xs">Your Secure Notes</p>
-    </div>
 
-    <div class="glass-card rounded-2xl p-8 transition-transform duration-500 hover:shadow-primary/10">
-      <form id="login-form" class="space-y-6">
-        <div class="space-y-1.5">
-          <label class="block text-[11px] font-bold uppercase tracking-[0.15em] text-textMuted ml-1">Email
-            Address</label>
-          <div class="relative group">
-            <span
-              class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary/70 text-[20px] group-focus-within:text-primary transition-colors">alternate_email</span>
-            <input type="text" id="email" required
-              class="glass-input w-full rounded-xl py-3.5 pl-12 pr-4 text-white placeholder-gray-500 outline-none transition-all duration-300"
-              placeholder="user@email.com" />
+      <!-- Card -->
+      <div class="glass" style="border-radius:22px;padding:36px 32px;">
+        <h2 style="font-size:20px;font-weight:800;color:#fff;margin-bottom:6px;">Welcome back 👋</h2>
+        <p style="font-size:13.5px;color:var(--muted);margin-bottom:28px;">Sign in to continue to your workspace.</p>
+
+        <form id="login-form" novalidate>
+
+          <!-- Username -->
+          <div style="margin-bottom:18px;">
+            <label class="n-label" for="username">Username</label>
+            <div style="position:relative;">
+              <span class="material-symbols-outlined" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:rgba(99,102,241,.55);font-size:20px;transition:color .2s;" id="user-icon">person</span>
+              <input type="text" id="username" autocomplete="username" required
+                class="glass-input" placeholder="your_username"
+                style="width:100%;border-radius:13px;padding:14px 14px 14px 46px;font-size:14px;font-family:inherit;">
+            </div>
           </div>
-        </div>
 
-        <div class="space-y-1.5">
-          <div class="flex justify-between items-end ml-1">
-            <label class="block text-[11px] font-bold uppercase tracking-[0.15em] text-textMuted">Password</label>
-            <a href="#" class="text-[11px] text-primary hover:text-white transition-colors font-medium">Forgot?</a>
+          <!-- Password -->
+          <div style="margin-bottom:24px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+              <label class="n-label" style="margin-bottom:0;">Password</label>
+              <a href="#" style="font-size:11px;color:var(--primary);font-weight:600;text-decoration:none;letter-spacing:.04em;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--primary)'">Forgot?</a>
+            </div>
+            <div style="position:relative;">
+              <span class="material-symbols-outlined" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:rgba(99,102,241,.55);font-size:20px;">lock</span>
+              <input type="password" id="password" autocomplete="current-password" required
+                class="glass-input" placeholder="••••••••"
+                style="width:100%;border-radius:13px;padding:14px 46px 14px 46px;font-size:14px;font-family:inherit;">
+              <button type="button" class="pw-eye" id="pw-toggle" aria-label="Show/hide password">
+                <span class="material-symbols-outlined" id="pw-eye" style="font-size:20px;">visibility</span>
+              </button>
+            </div>
           </div>
-          <div class="relative group">
-            <span
-              class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary/70 text-[20px] group-focus-within:text-primary transition-colors">lock</span>
-            <input type="password" id="password" required
-              class="glass-input w-full rounded-xl py-3.5 pl-12 pr-4 text-white placeholder-gray-500 outline-none transition-all duration-300"
-              placeholder="••••••••" />
-          </div>
-        </div>
 
-        <button type="submit"
-          class="w-full bg-gradient-to-r from-primary to-primaryHover hover:from-primaryHover hover:to-indigo-500 text-white font-bold py-4 rounded-xl shadow-[0_0_20px_rgba(99,102,241,0.3)] hover:shadow-[0_0_25px_rgba(99,102,241,0.5)] transition-all duration-300 active:scale-[0.98] mt-6 flex items-center justify-center group overflow-hidden relative">
-          <span
-            class="absolute w-0 h-0 transition-all duration-500 ease-out bg-white rounded-full group-hover:w-56 group-hover:h-56 opacity-10"></span>
-          <span class="relative flex items-center gap-2">Log In <span
-              class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">arrow_forward</span></span>
-        </button>
-      </form>
+          <!-- Submit -->
+          <button type="submit" id="login-btn" class="btn btn-primary" style="width:100%;padding:15px;border-radius:13px;font-size:15px;letter-spacing:.02em;">
+            <span id="login-btn-inner" class="btn-inner" style="display:flex;align-items:center;gap:8px;">
+              Log In <span class="material-symbols-outlined" style="font-size:18px;" id="login-arrow">arrow_forward</span>
+            </span>
+          </button>
+        </form>
 
-      <div class="mt-8 pt-6 border-t border-white/5 text-center">
-        <p class="text-sm text-textMuted">
-          New to Notiva? <a href="signup.html"
-            class="text-primary hover:text-white transition-colors font-bold tracking-wide">Create an Account</a>
+        <div class="n-divider" style="margin:24px 0 20px;">or</div>
+        <p style="text-align:center;font-size:14px;color:var(--muted);">
+          New to Notiva?
+          <a href="signup.html" style="color:var(--primary);font-weight:700;text-decoration:none;margin-left:4px;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='var(--primary)'">Create an Account</a>
         </p>
       </div>
+
+      <p style="text-align:center;font-size:11px;color:#374151;margin-top:24px;">© 2025 Notiva · All rights reserved</p>
     </div>
   </div>
 
   <script>
-    if (api.getToken()) { window.location.href = 'dashboard.html'; }
+    // Redirect if already logged in
+    if (api.getToken()) window.location.href = 'dashboard.html';
 
-    document.getElementById('login-form').onsubmit = async (e) => {
+    // Particles
+    initParticles('n-canvas');
+
+    // Password toggle
+    document.getElementById('pw-toggle').addEventListener('click', () => {
+      const inp = document.getElementById('password');
+      const eye = document.getElementById('pw-eye');
+      inp.type = inp.type === 'password' ? 'text' : 'password';
+      eye.textContent = inp.type === 'password' ? 'visibility' : 'visibility_off';
+    });
+
+    // Focus icon color
+    document.getElementById('username').addEventListener('focus', () => document.getElementById('user-icon').style.color = '#6366F1');
+    document.getElementById('username').addEventListener('blur',  () => document.getElementById('user-icon').style.color = 'rgba(99,102,241,.55)');
+
+    // Login
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const em = document.getElementById('email').value;
+      const username = document.getElementById('username').value.trim();
       const pw = document.getElementById('password').value;
 
-      const btn = e.target.querySelector('button[type="submit"]');
-      const originalHtml = btn.innerHTML;
-      btn.innerHTML = '<span class="relative flex items-center gap-2">Authenticating...</span>';
+      if (!username || !pw) { showToast('Please enter your username and password.', 'error'); return; }
+
+      const btn = document.getElementById('login-btn');
+      const inner = document.getElementById('login-btn-inner');
+      btn.disabled = true;
+      inner.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px;animation:spin 1s linear infinite">progress_activity</span> Signing in…';
 
       try {
-        const res = await api.login(em, pw);
+        const res = await api.login(username, pw);
         if (res && res.token) {
           api.setToken(res.token);
+          showToast('Welcome back! Redirecting…', 'success');
           try {
             const user = await api.getUser();
-            if (user) {
-              NotivaState.user = { id: user.id || user.userName, name: user.userName, email: user.email };
-            }
-          } catch (err) { console.error("Could not fetch user profile", err); }
-          window.location.href = 'dashboard.html';
+            if (user) NotivaState.user = { id: user.id || user.userName, name: user.userName, email: user.email };
+          } catch (_) {}
+          setTimeout(() => window.location.href = 'dashboard.html', 900);
         }
       } catch (error) {
-        showToast(error.message || 'Invalid credentials provided.', 'error');
-        btn.innerHTML = originalHtml;
+        btn.disabled = false;
+        inner.innerHTML = 'Log In <span class="material-symbols-outlined" style="font-size:18px;">arrow_forward</span>';
+        showLoginError(error.message || 'Invalid credentials. Please try again.');
       }
-    };
+    });
+
+    // Spin animation for loader
+    const s = document.createElement('style');
+    s.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
+    document.head.appendChild(s);
   </script>
 </body>
-
 </html>
