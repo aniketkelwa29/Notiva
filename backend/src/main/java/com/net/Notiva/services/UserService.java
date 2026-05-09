@@ -4,6 +4,7 @@ import com.net.Notiva.entity.User;
 import com.net.Notiva.exception.ResourceNotFoundException;
 import com.net.Notiva.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -30,7 +31,7 @@ public class UserService {
         User user = getAuthenticatedUser();
 
         return userRepository.findById(user.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not Found"+user.getId()));
+                .orElseThrow(() -> new ResourceNotFoundException("User not Found" + user.getId()));
 
     }
 
@@ -44,14 +45,18 @@ public class UserService {
         String encodedPassword = passwordEncoder.encode(userDetails.getPassword());
         userDetails.setPassword(encodedPassword);
 
-        return userRepository.save(userDetails);
+        try {
+            return userRepository.save(userDetails);
 
+        } catch (DuplicateKeyException e) {
+
+            throw new RuntimeException("Username already exists");
+        }
     }
-
-    public User updateUser( User updatedDetails) {
+    public User updateUser(User updatedDetails) {
         User user = getAuthenticatedUser();
         User existingUser = userRepository.findById(user.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not Found"+user.getId()));
+                .orElseThrow(() -> new ResourceNotFoundException("User not Found" + user.getId()));
 
         existingUser.setUserName(updatedDetails.getUserName());
         if (updatedDetails.getPassword() != null) {
@@ -65,7 +70,7 @@ public class UserService {
     public User deleteUser() {
         User user = getAuthenticatedUser();
         User existingUser = userRepository.findById(user.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not Found"+user.getId()));
+                .orElseThrow(() -> new ResourceNotFoundException("User not Found" + user.getId()));
 
         userRepository.deleteById(user.getId());
 

@@ -19,7 +19,7 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<User> getUser() {
-        System.out.println("call from get ");
+//        System.out.println("call from get ");
         return new ResponseEntity<>(userService.getUser(), HttpStatus.OK);
     }
 
