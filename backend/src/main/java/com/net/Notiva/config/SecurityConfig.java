@@ -41,6 +41,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/user/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
+//                        .requestMatchers(HttpMethod.,"/api/reminders").permitAll()
                         .requestMatchers(HttpMethod.GET, "/admin").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )

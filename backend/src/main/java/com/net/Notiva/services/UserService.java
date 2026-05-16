@@ -53,6 +53,7 @@ public class UserService {
             throw new RuntimeException("Username already exists");
         }
     }
+
     public User updateUser(User updatedDetails) {
         User user = getAuthenticatedUser();
         User existingUser = userRepository.findById(user.getId())

@@ -19,6 +19,6 @@ public class Note {
 
     private String userId;
 
-    private LocalDateTime currenttime =LocalDateTime.now();
+    private LocalDateTime currenttime = LocalDateTime.now();
 
 }

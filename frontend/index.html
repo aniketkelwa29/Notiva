@@ -128,13 +128,36 @@
     document.getElementById('username').addEventListener('focus', () => document.getElementById('user-icon').style.color = '#6366F1');
     document.getElementById('username').addEventListener('blur',  () => document.getElementById('user-icon').style.color = 'rgba(99,102,241,.55)');
 
+    // Translate raw backend errors into user-friendly messages
+    function _friendlyLoginError(error) {
+      const raw = (error.message || '').toLowerCase();
+
+      // Backend throws NullPointerException when user doesn't exist
+      if (raw.includes('user is null') || raw.includes('nullpointer') || raw.includes('cannot invoke')) {
+        return 'No account found with that username.<br><span style="font-size:12px;opacity:.7">Double-check your username or <a href="signup.html" style="color:#818CF8;text-decoration:none;font-weight:700;">create a new account</a>.</span>';
+      }
+
+      // Wrong password / unauthorized
+      if (raw.includes('401') || raw.includes('unauthorized') || raw.includes('invalid password') || raw.includes('wrong password') || raw.includes('bad credentials')) {
+        return 'Incorrect password.<br><span style="font-size:12px;opacity:.7">Please re-enter your password carefully.</span>';
+      }
+
+      // Network / server down
+      if (raw.includes('failed to fetch') || raw.includes('networkerror') || raw.includes('network') || raw.includes('500')) {
+        return 'Unable to reach the server.<br><span style="font-size:12px;opacity:.7">Check your connection and try again.</span>';
+      }
+
+      // Generic fallback — still clean, no Java stack trace
+      return 'Please enter valid credentials to log in.<br><span style="font-size:12px;opacity:.7">Username or password may be incorrect.</span>';
+    }
+
     // Login
     document.getElementById('login-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const username = document.getElementById('username').value.trim();
       const pw = document.getElementById('password').value;
 
-      if (!username || !pw) { showToast('Please enter your username and password.', 'error'); return; }
+      if (!username || !pw) { showToast('Please enter your username and password.', 'warning', '⚠️ Fields Required'); return; }
 
       const btn = document.getElementById('login-btn');
       const inner = document.getElementById('login-btn-inner');
@@ -145,17 +168,18 @@
         const res = await api.login(username, pw);
         if (res && res.token) {
           api.setToken(res.token);
-          showToast('Welcome back! Redirecting…', 'success');
+          showToast('Redirecting you to your workspace…', 'success', '🎉 Welcome Back!');
           try {
             const user = await api.getUser();
             if (user) NotivaState.user = { id: user.id || user.userName, name: user.userName, email: user.email };
           } catch (_) {}
-          setTimeout(() => window.location.href = 'dashboard.html', 900);
+          sessionStorage.setItem('notiva_just_logged_in', '1');
+          setTimeout(() => window.location.href = 'dashboard.html', 1100);
         }
       } catch (error) {
         btn.disabled = false;
         inner.innerHTML = 'Log In <span class="material-symbols-outlined" style="font-size:18px;">arrow_forward</span>';
-        showLoginError(error.message || 'Invalid credentials. Please try again.');
+        showLoginError(_friendlyLoginError(error));
       }
     });
 

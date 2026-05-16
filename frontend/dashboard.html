@@ -210,6 +210,14 @@
     initSidebar();
     fillNavUser();
 
+    // Show welcome popup on every fresh login
+    if (sessionStorage.getItem('notiva_just_logged_in') === '1') {
+      sessionStorage.removeItem('notiva_just_logged_in');
+      const _u = NotivaState.user || {};
+      const _name = _u.name || _u.userName || 'there';
+      setTimeout(() => showWelcomeModal(_name), 600);
+    }
+
     const u = NotivaState.user || {};
     const hours = new Date().getHours();
     const greet = hours < 12 ? 'Good Morning' : hours < 18 ? 'Good Afternoon' : 'Good Evening';

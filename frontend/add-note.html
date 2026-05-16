@@ -11,6 +11,7 @@
   <script src="api.js"></script>
   <script src="app.js"></script>
   <script src="notiva-bg.js"></script>
+  <script src="reminder.js"></script>
   <style>
     .title-input {
       width:100%; background:transparent; border:none; outline:none;
@@ -85,6 +86,12 @@
               </div>
             </div>
 
+            <!-- Reminder Button -->
+            <div style="display:flex;justify-content:flex-end;align-items:center;gap:10px;margin-bottom:20px;">
+              <span style="font-size:11px;font-weight:600;color:rgba(245,158,11,.55);letter-spacing:.08em;">Remind me</span>
+              <div id="reminder-btn-wrap"></div>
+            </div>
+
             <!-- Editor -->
             <div style="position:relative;min-height:380px;">
               <div style="position:absolute;inset:0;pointer-events:none;opacity:.04;background-image:repeating-linear-gradient(0deg,transparent,transparent 36px,rgba(255,255,255,1) 36px,rgba(255,255,255,1) 37px);"></div>
@@ -110,6 +117,11 @@
   <script>
     requireAuth();
     initParticles('n-canvas');
+
+    // Reminder: use temp ID for new notes (replaced on save)
+    let _remNoteId = 'new_' + Date.now();
+    const _remWrap = document.getElementById('reminder-btn-wrap');
+    _remWrap.appendChild(createReminderButton(_remNoteId, ''));
 
     function fmt(cmd, val=null) {
       document.execCommand(cmd, false, val);

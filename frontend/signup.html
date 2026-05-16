@@ -185,8 +185,8 @@
       const pw=document.getElementById('password').value;
       const cnf=document.getElementById('confirm').value;
 
-      if(pw!==cnf){ showToast('Passwords do not match.','error'); return; }
-      if(pw.length<6){ showToast('Password must be at least 6 characters.','error'); return; }
+      if(pw!==cnf){ showToast('Passwords do not match. Please retype them.','error','⚠️ Mismatch'); return; }
+      if(pw.length<6){ showToast('Password must be at least 6 characters.','error','⚠️ Too Short'); return; }
 
       const btn=document.getElementById('signup-btn');
       const inner=document.getElementById('signup-inner');
@@ -195,21 +195,22 @@
 
       try {
         const newUser = await api.register(n, em, pw);
-        showToast('Account created! Welcome to Notiva 🎉','success');
+        showToast('Your account is ready — logging you in now!', 'success', '🎉 Account Created!');
         // Auto-login
         try {
           const res = await api.login(n, pw);
           if(res&&res.token){
             api.setToken(res.token);
             NotivaState.user = { id: newUser.id||newUser.userName, name: newUser.userName, email: newUser.email };
-            setTimeout(()=>window.location.href='dashboard.html', 1200);
+            sessionStorage.setItem('notiva_just_logged_in', '1');
+            setTimeout(()=>window.location.href='dashboard.html', 1400);
             return;
           }
         } catch(_){}
         // Fallback: redirect to login with pre-filled hint
-        setTimeout(()=>window.location.href='index.html', 1800);
+        setTimeout(()=>window.location.href='index.html', 2000);
       } catch(err) {
-        showToast(err.message||'Failed to create account. Please try again.','error');
+        showToast(err.message||'Failed to create account. Please try again.','error', '❌ Registration Failed');
         btn.disabled=false;
         inner.innerHTML='Create Account <span class="material-symbols-outlined" style="font-size:18px;">arrow_forward</span>';
       }
